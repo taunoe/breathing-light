@@ -619,7 +619,7 @@ void sun() {
   static bool update[NUM_OF_CIRCLES] = {false};
   uint delays[NUM_OF_CIRCLES] = {65, 55, 75, 55, 85, 95, 115, 125, 135, 65};
   const int lenghts[NUM_OF_CIRCLES] = {7, 7, 6, 5, 4, 4, 4, 3, 3, 1};
-  uint32_t colors[NUM_OF_CIRCLES] = {0xF8AA00, 0xF8AA00, 0xF8AA00, 0xF8AA00,
+  uint32_t colors[NUM_OF_CIRCLES] = {0xF8AA00, 0xF8AA00, 0xF8AA00, 0xff7618,
                                      0xFF9400, 0xFF4000, 0xFF3000, 0xFF6400,
                                      0xFF3000};
   static uint prev_millis[NUM_OF_CIRCLES] = {0};
