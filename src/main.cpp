@@ -610,9 +610,9 @@ void kaar(int kaar, int lenght, uint32_t color, int delay_val) {
 
 /*
  * --------------------------------------------------
- * --- SUN ------------------------------------------
+ * --- Celestial Object -----------------------------
  */
-void sun() {
+void celestial_object() {
   static uint32_t LED_colors[LED_COUNT] = {0};
   static bool initialize = true;
   static bool colors_changed = false;
@@ -626,7 +626,7 @@ void sun() {
   // circle 0
   const int start_arc_0 = CIRCLES[0];
   const int end_arc_0 = CIRCLES[1];
-  static int pixels_arc_0[7] = {0};  // nr
+  static int pixels_arc_0[7] = {0};  // active pixels nr
   // circle 1
   const int start_arc_1 = CIRCLES[0]+CIRCLES[1];
   const int end_arc_1 = CIRCLES[1]+CIRCLES[2];
@@ -944,23 +944,49 @@ void sun() {
     }
   }
 
-  // ALL OUT
+  // ALL colors OUT
   if (colors_changed) {
     colors_changed = false;
     pixels.clear();
-    // All LEDs colors out
-    // Serial.println("colors out");
     for (int led = 0; led < LED_COUNT; led++) {
       pixels.setPixelColor(led, LED_colors[led]);
-      // TODO(Taunoe):  Add delay!
-      // Serial.print("led=");
-      // Serial.print(led);
-      // Serial.print(" c=");
-      // Serial.println(LED_colors[led]);
     }
     delay(1);
     pixels.show();
   }
+}
+
+/*
+ *
+ */
+
+void breathing(int delay_val, uint32_t colour) {
+  static uint start = 0;
+  static uint end = 0;
+
+  // Seest välja
+  // Ringi algused
+  for (uint i = 0; i < NUM_OF_CIRCLES; i++) {
+    start += CIRCLES[i];
+  }
+  // Ringi lõppud
+  for (uint i = 1; i <= NUM_OF_CIRCLES+1; i++) {
+    end += CIRCLES[i];
+  }
+
+  for (uint i = NUM_OF_CIRCLES; i > 0; i--) {
+    pixels.clear();
+
+    for (int p = start; p < end; p++) {
+      pixels.setPixelColor(p, colour);
+    }
+
+    pixels.show();
+    delay(delay_val);
+    start -= CIRCLES[i-1];
+    end -= CIRCLES[i];
+  }
+
 }
 
 
@@ -995,7 +1021,9 @@ void loop() {
   // fade_chase();
   // sektor(50);
   // kaar(1, 5, 0xF8AA00, 75);
-  sun();
+
+  //celestial_object();
+  ringid_in_to_out(100, 0xff7d00);
 
   // pixels.clear();
 
