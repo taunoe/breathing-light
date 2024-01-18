@@ -956,10 +956,10 @@ void celestial_object() {
   }
 }
 
+
 /*
  *
  */
-
 void breathing(int delay_val, uint32_t colour) {
   static uint start = 0;
   static uint end = 0;
@@ -1022,8 +1022,8 @@ void loop() {
   // sektor(50);
   // kaar(1, 5, 0xF8AA00, 75);
 
-  //celestial_object();
-  ringid_in_to_out(100, 0xff7d00);
+  celestial_object();
+  // ringid_in_to_out(100, 0xff7d00);
 
   // pixels.clear();
 
