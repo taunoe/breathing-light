@@ -962,24 +962,42 @@ void celestial_object() {
  */
 
 void alt_ylesse(int delay_val, uint32_t colour) {
-  const int arc_count = 4;
-  const int max_arc_size = 11;
-  static int current_arc = 0;
+  const int arc_count = 22;
+  const int max_arc_size = 19;
+  static int current_arc = -1;
 
-  const int arc_sizes[arc_count] = {};
+  const int arc_sizes[arc_count] = {0};
 
   // negatiivset ei loe
   const int arcs[arc_count][max_arc_size] = {
-    {8, 9},
-    {7, 10, 40, 41},
-    {6, 11, 38, 43, 71, 74, 103, 104, -1,  -1,  -1},
-    {6, 11, 38, 43, 70, 75, 102, 105, 128, 129, 138}
+    {8, 9, },  // 1
+    {7, 10, 40, 41, },  // 2
+    {7, 18, 39, 42, 72, 73, },  // 3
+    {6, 11, 38,  43,  71, 74, 103, 104, },  // 4
+    {6, 11, 38,  43,  70, 75,  78, 102, 105, 128, 129, 130, },  // 5
+    {5, 12, 37,  44,  69, 76, 101, 106, 127, 131, 151, 152, },  // 6
+    {4, 13, 36, 45, 68, 77, 100, 107, 126, 132, 153, 158, 168, 169, 170, 171, },  // 7
+    {3,35,67,99,125,149,167,185,186,187,188,172,154,133,108,78,46,14},
+    {2,34,66,98,124,148,166,184,198,199,189,173,155,164,109,79,47,15},
+    {2,34,66,98,124,148,166,183,197,204,200,190,174,156,135,110,80,48,16},
+    {1,35,65,97,123,147,165,183,197,204,200,190,174,156,135,110,80,48,16},
+    {32,64,96,122,146,164,182,196,203,202,201,191,174,156,135,110,81,49,17},
+    {31,63,95,122,146,164,182,196,203,202,201,191,175,157,136,111,82,50,18},
+    {30,62,94,121,145,163,181,195,202,192,176,158,137,112,83,51,19},
+    {29,61,93,120,144,162,188,194,193,177,158,138,113,84,52,20},
+    {28,68,92,144,162,179,178,177,159,135,114,85,53,21,},
+    {27,59,91,119,143,161,160,140,115,86,54,22,},
+    {26,58,98,118,142,141,116,87,55,23},
+    {25,57,89,117,116,88,56,24},
+    {25,57,89,88,56,24},
+    {25,57,56,24},
+    {25,24}
   };
 
   static uint32_t LED_colors[LED_COUNT] = {0};
   static bool colors_changed = false;
   static bool update = false;
-  uint prev_millis = 0;
+  static uint32_t prev_millis = 0;
 
   // Time
   if ((millis() - prev_millis) >= delay_val) {
@@ -988,24 +1006,39 @@ void alt_ylesse(int delay_val, uint32_t colour) {
   }
 
   // Change
-  if (update) {
+  if (update == true) {
+    Serial.print("update ");
+    Serial.println(update);
     update = false;
+    Serial.print("update ");
+    Serial.println(update);
     colors_changed = true;
-
+    
+    current_arc = current_arc+1;
+    Serial.print("2 current_arc ");
+    Serial.println(current_arc);
+    
     if (current_arc >= arc_count) {
-        current_arc = 0;
+      Serial.println("suurem kui");
+      current_arc = 0;
     }
+    
+    Serial.print("1 current_arc ");
+    Serial.println(current_arc);
+  
     // eemalda vanad
-    LED_colors[LED_COUNT] = {0};
-
+    for (size_t i = 0; i < LED_COUNT; i++) {
+      LED_colors[i] = 0;
+    }
     // lisa uued kaare ledid
     int led = 0;
     for (int i = 0; i < max_arc_size; i++) {
       led = arcs[current_arc][i];
-      LED_colors[led] = colour;
+      if (led > 0) {
+        LED_colors[led] = colour;
+      }
+      
     }
-    
-    current_arc++;
   }
 
   // ALL colors OUT
@@ -1091,10 +1124,10 @@ void loop() {
   // celestial_object();
   // ringid_in_to_out(100, 0xff7d00);
 
-  //celestial_object();
-  //ringid_in_to_out(100, 0xff7d00);
+  // celestial_object();
+  // ringid_in_to_out(100, 0xff7d00);
 
-  alt_ylesse(100, 0xff7d00);
+  alt_ylesse(100, 0x7aff18);
 
   // pixels.clear();
 
