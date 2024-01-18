@@ -2,7 +2,7 @@
  * File: main.cpp
  * Copyright Tauno Erik
  * Created: 24.12.2023
- * Last edited: 31.12.2023
+ * Last edited: 18.01.2024
  * Version:
  * Description: RGB LED circle
  * Hardware:
@@ -960,6 +960,68 @@ void celestial_object() {
  *
  */
 
+void alt_ylesse(int delay_val, uint32_t colour) {
+  const int arc_count = 4;
+  const int max_arc_size = 11;
+  static int current_arc = 0;
+
+  const int arc_sizes[arc_count] = {};
+
+  // negatiivset ei loe
+  const int arcs[arc_count][max_arc_size] = {
+    {8, 9},
+    {7, 10, 40, 41},
+    {6, 11, 38, 43, 71, 74, 103, 104, -1,  -1,  -1},
+    {6, 11, 38, 43, 70, 75, 102, 105, 128, 129, 138}
+  };
+
+  static uint32_t LED_colors[LED_COUNT] = {0};
+  static bool colors_changed = false;
+  static bool update = false;
+  uint prev_millis = 0;
+
+  // Time
+  if ((millis() - prev_millis) >= delay_val) {
+    prev_millis = millis();
+    update = true;
+  }
+
+  // Change
+  if (update) {
+    update = false;
+    colors_changed = true;
+
+    if (current_arc => arc_count) {
+        current_arc = 0;
+    }
+    // eemalda vanad
+    LED_colors[LED_COUNT] = {0};
+
+    // lisa uued kaare ledid
+    int led = 0;
+    for (int i = 0; i < max_arc_size; i++) {
+      led = arcs[current_arc][i];
+      LED_colors[led] = colour;
+    }
+    
+    current_arc++;
+  }
+
+  // ALL colors OUT
+  if (colors_changed) {
+    colors_changed = false;
+    pixels.clear();
+    for (int led = 0; led < LED_COUNT; led++) {
+      pixels.setPixelColor(led, LED_colors[led]);
+    }
+    delay(1);
+    pixels.show();
+  }
+}
+
+/*
+ *
+ */
 void breathing(int delay_val, uint32_t colour) {
   static uint start = 0;
   static uint end = 0;
@@ -1023,7 +1085,9 @@ void loop() {
   // kaar(1, 5, 0xF8AA00, 75);
 
   //celestial_object();
-  ringid_in_to_out(100, 0xff7d00);
+  //ringid_in_to_out(100, 0xff7d00);
+
+  alt_ylesse(100, 0xff7d00);
 
   // pixels.clear();
 
