@@ -2,7 +2,7 @@
  * File: main.cpp
  * Copyright Tauno Erik
  * Created: 24.12.2023
- * Last edited: 18.01.2024
+ * Last edited: 23.01.2024
  * Version:
  * Description: RGB LED circle
  * Hardware:
@@ -20,8 +20,23 @@
 #include "Adafruit_GFX.h"
 // #include "Adafruit_NeoMatrix.h"
 #include "Adafruit_NeoPixel.h"
+#include "Tauno_rotary_encoder.h"
 
-const uint LED_PIN = 6;
+// PINS
+const int LED_PIN = 6;
+const int RE_SW_PIN  = 20;
+const int RE_CLK_PIN = 21;
+const int RE_DT_PIN  = 22;
+
+// Rotary Encoder
+Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
+
+uint selected_program = 0;
+int RE_state = 0;
+int last_RE_state = 0;
+uint32_t last_debounce_time = 0;
+uint32_t debounce_delay = 50;
+bool change = false;
 
 // LEDide arv igas ringis
 const uint CIRCLE_1_NUM = 32;
@@ -1089,8 +1104,11 @@ void breathing(int delay_val, uint32_t colour) {
 
 
 /************************************************************************/
+// Core 0 setup
 void setup() {
   Serial.begin(115200);
+
+  
 
   pixels.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   pixels.show();            // Turn OFF all pixels ASAP
@@ -1103,8 +1121,48 @@ void setup() {
   randomSeed(analogRead(0));
 }
 
+// Core 1 setup
+void setup1 () {
+  RE.begin();
+}
 
+// Core 0 loop
 void loop() {
+  switch (selected_program) {
+    case 1:
+      rainbow(10);
+      break;
+    case 2:
+      celestial_object();
+      break;
+    case 3:
+      tester(10);
+      break;
+    case 4:
+      alt_ylesse(100, 0x7aff18);
+      break;
+    case 5:
+      bounce(20);
+      break;
+    case 6:
+      ringid_in_to_out(100, 0xff7d00);
+      break;
+    case 7:
+      fade_all(40);
+      break;
+    case 8:
+      fade_chase();
+      break;
+  
+    case 9:
+      // stop
+      break;
+  
+    default:
+      celestial_object();
+      break;
+  }
+
   // strip.clear();  // all off
 
   // ringid_out_to_in(500);
@@ -1125,9 +1183,9 @@ void loop() {
   // ringid_in_to_out(100, 0xff7d00);
 
   // celestial_object();
-  // ringid_in_to_out(100, 0xff7d00);
+  //ringid_in_to_out(100, 0xff7d00);
 
-  alt_ylesse(100, 0x7aff18);
+  // alt_ylesse(100, 0x7aff18);
 
   // pixels.clear();
 
@@ -1139,6 +1197,46 @@ void loop() {
   // theaterChaseRainbow(50);  // Rainbow-enhanced theaterChase variant
 }
 
+// Core 1 loop
+void loop1() {
+  // Read Rotary Encoder rotation direction
+  int re_direction = RE.read();
+  
+  // Read Rotary Encoder rotation speed:
+  uint16_t re_speed = RE.speed();
+  
+  // Read Rotary Encoder button:
+  int button = RE.button();
 
+  if (selected_program > 10) {
+    selected_program = 0;
+  }
+
+  // If Rotary Encoder is rotated:
+  // CW = clockwise rotation
+  // CCW = counterclockwise rotation
+  if (re_direction == DIR_CW) {
+    Serial.print("Direction ");
+    Serial.print("->");
+    Serial.print(" Speed:");
+    Serial.println(re_speed);
+    selected_program++;
+    Serial.print("Selected program ");
+    Serial.println(selected_program);
+  } else if (re_direction == DIR_CCW) {
+    Serial.print("Direction ");
+    Serial.print("<-");
+    Serial.print(" Speed:");
+    Serial.println(re_speed);
+    selected_program--;
+    Serial.print("Selected program ");
+    Serial.println(selected_program);
+  }
+
+  // If Rotary Encoder button is pressed:
+  if (button) {
+    Serial.println("Button!");
+  }
+}
 
 
