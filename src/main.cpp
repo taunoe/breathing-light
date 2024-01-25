@@ -31,7 +31,7 @@ const int RE_DT_PIN  = 22;
 // Rotary Encoder
 Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
 
-uint selected_program = 0;
+int selected_program = 0;
 int RE_state = 0;
 int last_RE_state = 0;
 uint32_t last_debounce_time = 0;
@@ -1210,6 +1210,9 @@ void loop1() {
 
   if (selected_program > 10) {
     selected_program = 0;
+  }
+  if (selected_program < 0) {
+    selected_program = 9;
   }
 
   // If Rotary Encoder is rotated:
