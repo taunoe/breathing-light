@@ -2,7 +2,7 @@
  * File: main.cpp
  * Copyright Tauno Erik
  * Created: 24.12.2023
- * Last edited: 23.01.2024
+ * Last edited: 07.04.2024
  * Version:
  * Description: RGB LED circle
  * Hardware:
@@ -24,9 +24,19 @@
 
 // PINS
 const int LED_PIN = 6;
-const int RE_SW_PIN  = 20;
-const int RE_CLK_PIN = 21;
-const int RE_DT_PIN  = 22;
+// Rotary Encoder
+const int RE_SW_PIN  = 13;
+const int RE_CLK_PIN = 15;
+const int RE_DT_PIN  = 14;
+// 7-SEG LED
+const int  A_PIN = 18;
+const int  B_PIN = 19;
+const int DP_PIN = 20;
+const int  C_PIN = 21;
+const int  D_PIN = 22;
+const int  E_PIN = 26;
+const int  G_PIN = 27;
+const int  F_PIN = 28;
 
 // Rotary Encoder
 Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
@@ -39,31 +49,28 @@ uint32_t debounce_delay = 50;
 bool change = false;
 
 // LEDide arv igas ringis
-const uint CIRCLE_1_NUM = 32;
-const uint CIRCLE_2_NUM = 32;
-const uint CIRCLE_3_NUM = 32;
-const uint CIRCLE_4_NUM = 26;
-const uint CIRCLE_5_NUM = 24;
-const uint CIRCLE_6_NUM = 18;
-const uint CIRCLE_7_NUM = 18;
+const uint CIRCLE_1_NUM = 35;
+const uint CIRCLE_2_NUM = 35;
+const uint CIRCLE_3_NUM = 35;
+const uint CIRCLE_4_NUM = 28;
+const uint CIRCLE_5_NUM = 28;
+const uint CIRCLE_6_NUM = 21;
+const uint CIRCLE_7_NUM = 21;
 const uint CIRCLE_8_NUM = 14;
 const uint CIRCLE_9_NUM = 7;
-const uint CIRCLE_10_NUM = 1;
 
-const uint NUM_OF_CIRCLES = 10;
+const uint NUM_OF_CIRCLES = 9;
 
 const uint CIRCLES[NUM_OF_CIRCLES + 1] = {0, CIRCLE_1_NUM, CIRCLE_2_NUM,
                                       CIRCLE_3_NUM, CIRCLE_4_NUM,
                                       CIRCLE_5_NUM, CIRCLE_6_NUM,
                                       CIRCLE_7_NUM, CIRCLE_8_NUM,
-                                      CIRCLE_9_NUM, CIRCLE_10_NUM
-                                     };
+                                      CIRCLE_9_NUM};
 
 // Kokku LEDe
 const uint LED_COUNT = CIRCLE_1_NUM + CIRCLE_2_NUM + CIRCLE_3_NUM
                      + CIRCLE_4_NUM + CIRCLE_5_NUM + CIRCLE_6_NUM
-                     + CIRCLE_7_NUM + CIRCLE_8_NUM + CIRCLE_9_NUM
-                     + CIRCLE_10_NUM;
+                     + CIRCLE_7_NUM + CIRCLE_8_NUM + CIRCLE_9_NUM;
 
 // Declare our NeoPixel strip object:
 Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -632,8 +639,8 @@ void celestial_object() {
   static bool initialize = true;
   static bool colors_changed = false;
   static bool update[NUM_OF_CIRCLES] = {false};
-  uint delays[NUM_OF_CIRCLES] = {65, 55, 75, 55, 85, 95, 115, 125, 135, 65};
-  const int lenghts[NUM_OF_CIRCLES] = {7, 7, 6, 5, 4, 4, 4, 3, 3, 1};
+  uint delays[NUM_OF_CIRCLES] = {65, 55, 75, 55, 85, 95, 115, 125, 135};
+  const int lenghts[NUM_OF_CIRCLES] = {7, 7, 6, 5, 4, 4, 4, 3, 3};
   uint32_t colors[NUM_OF_CIRCLES] = {0xF8AA00, 0xF8AA00, 0xF8AA00, 0xff7618,
                                      0xFF9400, 0xFF4000, 0xFF3000, 0xFF6400,
                                      0xFF3000};
@@ -1108,8 +1115,6 @@ void breathing(int delay_val, uint32_t colour) {
 void setup() {
   Serial.begin(115200);
 
-  
-
   pixels.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   pixels.show();            // Turn OFF all pixels ASAP
   pixels.setBrightness(50);  // Set BRIGHTNESS to about 1/5 (max = 255)
@@ -1122,7 +1127,7 @@ void setup() {
 }
 
 // Core 1 setup
-void setup1 () {
+void setup1() {
   RE.begin();
 }
 
@@ -1153,13 +1158,12 @@ void loop() {
     case 8:
       fade_chase();
       break;
-  
     case 9:
       // stop
       break;
-  
     default:
       celestial_object();
+      // rainbow(10);
       break;
   }
 
@@ -1183,7 +1187,7 @@ void loop() {
   // ringid_in_to_out(100, 0xff7d00);
 
   // celestial_object();
-  //ringid_in_to_out(100, 0xff7d00);
+  // ringid_in_to_out(100, 0xff7d00);
 
   // alt_ylesse(100, 0x7aff18);
 
@@ -1201,10 +1205,10 @@ void loop() {
 void loop1() {
   // Read Rotary Encoder rotation direction
   int re_direction = RE.read();
-  
+
   // Read Rotary Encoder rotation speed:
   uint16_t re_speed = RE.speed();
-  
+
   // Read Rotary Encoder button:
   int button = RE.button();
 
