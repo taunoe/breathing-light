@@ -1124,11 +1124,40 @@ void setup() {
   // different seed numbers each time the sketch runs.
   // randomSeed() will then shuffle the random function.
   randomSeed(analogRead(0));
+
+  // 7-segment led pins
+  pinMode(A_PIN, OUTPUT);
+  pinMode(B_PIN, OUTPUT);
+  pinMode(DP_PIN, OUTPUT);
+  pinMode(C_PIN, OUTPUT);
+  pinMode(D_PIN, OUTPUT);
+  pinMode(E_PIN, OUTPUT);
+  pinMode(G_PIN, OUTPUT);
+  pinMode(F_PIN, OUTPUT);
+
+  digitalWrite(A_PIN, LOW);
+  delay(200);
+  digitalWrite(B_PIN, LOW);
+  delay(200);
+  digitalWrite(DP_PIN, LOW);
+  delay(200);
+  digitalWrite(C_PIN, LOW);
+  delay(200);
+  digitalWrite(D_PIN, LOW);
+  delay(200);
+  digitalWrite(E_PIN, LOW);
+  delay(200);
+  digitalWrite(G_PIN, LOW);
+  delay(200);
+  digitalWrite(F_PIN, LOW);
+  delay(200);
 }
 
 // Core 1 setup
 void setup1() {
   RE.begin();
+
+  
 }
 
 // Core 0 loop
