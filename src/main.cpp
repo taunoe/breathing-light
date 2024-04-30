@@ -1,10 +1,10 @@
 /*
- * File: main.cpp
- * Copyright Tauno Erik
- * Created: 24.12.2023
- * Last edited: 07.04.2024
- * Version:
- * Description: RGB LED circle
+ * File:        main.cpp
+ * Copyright    Tauno Erik
+ * Created:     24.12.2023
+ * Last edited: 30.04.2024
+ * Project:     The Breathing Light
+ * 
  * Hardware:
  *   Pi Pico
  *   1000 uF CAPACITOR between NeoPixel strip's + and - connections
@@ -13,7 +13,7 @@
  *   a LOGIC-LEVEL CONVERTER on the data line is STRONGLY RECOMMENDED
  *   MINIMIZE WIRING LENGTH between microcontroller board and first pixel.
  * 
- * Vaata: https://github.com/FastLED/FastLED
+ * Vaata ka: https://github.com/FastLED/FastLED
  */
 
 #include <Arduino.h>
@@ -22,23 +22,29 @@
 #include "Adafruit_NeoPixel.h"
 #include "Tauno_rotary_encoder.h"
 
-// PINS
+// RGB LED strip
 const int LED_PIN = 6;
+
 // Rotary Encoder
 const int RE_SW_PIN  = 13;
 const int RE_CLK_PIN = 15;
 const int RE_DT_PIN  = 14;
-// 7-SEG LED
-const int  A_PIN = 18;
-const int  B_PIN = 19;
-const int DP_PIN = 20;
-const int  C_PIN = 21;
-const int  D_PIN = 22;
-const int  E_PIN = 26;
-const int  G_PIN = 27;
-const int  F_PIN = 28;
 
-// Rotary Encoder
+// 7-SEG LED
+const int  A_PIN = 18;  // 1
+const int  B_PIN = 19;  // 2
+const int DP_PIN = 20;  // 3
+const int  C_PIN = 21;  // 4
+const int  D_PIN = 22;  // 5
+const int  E_PIN = 26;  // 6
+const int  G_PIN = 27;  // 7
+const int  F_PIN = 28;  // 8
+
+const int SEVEN_SEG_PINS[8] = {
+  A_PIN, B_PIN, DP_PIN, C_PIN, D_PIN, E_PIN, G_PIN, F_PIN
+};
+
+// Declare Rotary Encoder object:
 Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
 
 int selected_program = 0;
@@ -84,7 +90,206 @@ Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
 
 
-// Some functions of our own for creating animated effects -----------------
+/*****************************************
+ * Function prototypes
+ *****************************************/
+void colorWipe(uint32_t color, int wait);
+void theaterChase(uint32_t color, int wait);
+void rainbow(int wait);
+void theaterChaseRainbow(int wait);
+void one_by_one(int delay_val);
+void ringid_out_to_in(int delay_val);
+void ringid_in_to_out(int delay_val);
+void ringid_in_to_out(int delay_val, uint32_t colour);
+void tester(int delay_val);
+void hex_color();
+void bounce(int delay_val);
+void fade_all(int max_brightness);
+void fade_chase();
+void sektor(int delay_val);
+void kaar(int kaar, int lenght, uint32_t color, int delay_val);
+void celestial_object();
+void alt_ylesse(int delay_val, uint32_t colour);
+void breathing(int delay_val, uint32_t colour);
+
+
+
+/*****************************************
+ * Core 0 setup
+ *****************************************/
+void setup() {
+  Serial.begin(115200);
+
+  pixels.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
+  pixels.show();            // Turn OFF all pixels ASAP
+  pixels.setBrightness(20);  // Set BRIGHTNESS to about 1/5 (max = 255)
+
+  // if analog input pin 0 is unconnected, random analog
+  // noise will cause the call to randomSeed() to generate
+  // different seed numbers each time the sketch runs.
+  // randomSeed() will then shuffle the random function.
+  randomSeed(analogRead(0));
+
+  // 7-segment led pins
+  pinMode(A_PIN, OUTPUT);
+  pinMode(B_PIN, OUTPUT);
+  pinMode(DP_PIN, OUTPUT);
+  pinMode(C_PIN, OUTPUT);
+  pinMode(D_PIN, OUTPUT);
+  pinMode(E_PIN, OUTPUT);
+  pinMode(G_PIN, OUTPUT);
+  pinMode(F_PIN, OUTPUT);
+
+  uint64_t now = millis();
+
+
+  for (int i = 0; i < 8; i++) {
+    digitalWrite(SEVEN_SEG_PINS[i], HIGH);
+    delay(200);
+  }
+
+  for (int i = 0; i < 8; i++) {
+    digitalWrite(SEVEN_SEG_PINS[i], LOW);
+    delay(200);
+  }
+
+}
+
+/*****************************************
+ * Core 1 setup
+ *****************************************/
+void setup1() {
+  RE.begin();
+
+}
+
+/*****************************************
+ * Core 0 loop
+ *****************************************/
+void loop() {
+  switch (selected_program) {
+    case 1:
+      rainbow(10);
+      break;
+    case 2:
+      celestial_object();
+      break;
+    case 3:
+      tester(10);
+      break;
+    case 4:
+      alt_ylesse(100, 0x7aff18);
+      break;
+    case 5:
+      bounce(20);
+      break;
+    case 6:
+      ringid_in_to_out(100, 0xff7d00);
+      break;
+    case 7:
+      fade_all(40);
+      break;
+    case 8:
+      fade_chase();
+      break;
+    case 9:
+      // stop
+      break;
+    default:
+      // celestial_object();
+      // rainbow(10);
+      static int i = 0;
+      Serial.println(i);
+      i++;
+      delay(300);
+      break;
+  }
+
+  // strip.clear();  // all off
+
+  // ringid_out_to_in(500);
+  // ringid_in_to_out(100);
+  // ringid_in_to_out(50, (pixels.Color(20, 70, 0)));
+  // ringid_in_to_out(50, (pixels.Color(70, 20, 0)));
+  // one_by_one(100);
+  // tester(10);
+  // hex_color();
+  // bounce(20);
+  // fade_all(40);
+  // fade_chase();
+  // sektor(50);
+  // kaar(1, 5, 0xF8AA00, 75);
+
+
+  // celestial_object();
+  // ringid_in_to_out(100, 0xff7d00);
+
+  // celestial_object();
+  // ringid_in_to_out(100, 0xff7d00);
+
+  // alt_ylesse(100, 0x7aff18);
+
+  // pixels.clear();
+
+  // Fill along the length of the strip in various colors...
+  // colorWipe(strip.Color(255, 0, 0), 50);  // Red
+  // colorWipe(strip.Color(0, 255, 0), 50);  // Green
+  // colorWipe(strip.Color(0, 0, 255), 50);  // Blue
+  // rainbow(10);             // Flowing rainbow cycle along the whole strip
+  // theaterChaseRainbow(50);  // Rainbow-enhanced theaterChase variant
+}
+
+/*****************************************
+ * Core 1 loop
+ *****************************************/
+void loop1() {
+  // Read Rotary Encoder rotation direction
+  int re_direction = RE.read();
+
+  // Read Rotary Encoder rotation speed:
+  uint16_t re_speed = RE.speed();
+
+  // Read Rotary Encoder button:
+  int button = RE.button();
+
+  if (selected_program > 10) {
+    selected_program = 0;
+  }
+  if (selected_program < 0) {
+    selected_program = 9;
+  }
+
+  // If Rotary Encoder is rotated:
+  // CW = clockwise rotation
+  // CCW = counterclockwise rotation
+  if (re_direction == DIR_CW) {
+    Serial.print("Direction ");
+    Serial.print("->");
+    Serial.print(" Speed:");
+    Serial.println(re_speed);
+    selected_program++;
+    Serial.print("Selected program ");
+    Serial.println(selected_program);
+  } else if (re_direction == DIR_CCW) {
+    Serial.print("Direction ");
+    Serial.print("<-");
+    Serial.print(" Speed:");
+    Serial.println(re_speed);
+    selected_program--;
+    Serial.print("Selected program ");
+    Serial.println(selected_program);
+  }
+
+  // If Rotary Encoder button is pressed:
+  if (button) {
+    Serial.println("Button!");
+  }
+}
+
+
+/***********************************
+ * Function Definitions
+ ***********************************/
 
 // Fill strip pixels one after another with a color. Strip is NOT cleared
 // first; anything there will be covered pixel by pixel. Pass in color
@@ -98,6 +303,7 @@ void colorWipe(uint32_t color, int wait) {
     delay(wait);                           //  Pause for a moment
   }
 }
+
 
 // Theater-marquee-style chasing lights. Pass in a color (32-bit value,
 // a la strip.Color(r,g,b) as mentioned above), and a delay time (in ms)
@@ -115,6 +321,7 @@ void theaterChase(uint32_t color, int wait) {
     }
   }
 }
+
 
 // Rainbow cycle along whole strip. Pass delay time (in ms) between frames.
 void rainbow(int wait) {
@@ -135,6 +342,7 @@ void rainbow(int wait) {
     delay(wait);  // Pause for a moment
   }
 }
+
 
 // Rainbow-enhanced theater marquee. Pass delay time (in ms) between frames.
 void theaterChaseRainbow(int wait) {
@@ -158,8 +366,10 @@ void theaterChaseRainbow(int wait) {
   }
 }
 
+
 /*
-Ükshaaval kõik*/
+ * Ükshaaval kõik
+ */
 void one_by_one(int delay_val) {
   pixels.clear();
   for (uint i = 0; i < LED_COUNT; i++) {
@@ -173,9 +383,10 @@ void one_by_one(int delay_val) {
   }
 }
 
+
 /*
-Väljast sisse
-*/
+ * Väljast sisse
+ */
 void ringid_out_to_in(int delay_val) {
   uint start = 0;
   uint end = 0;
@@ -205,9 +416,10 @@ void ringid_out_to_in(int delay_val) {
   // Serial.println();
 }
 
+
 /*
-Seest välja
-*/
+ * Seest välja
+ */
 void ringid_in_to_out(int delay_val) {
   uint start = 0;
   uint end = 0;
@@ -216,7 +428,7 @@ void ringid_in_to_out(int delay_val) {
     start += CIRCLES[i];
   }
 
-  for (uint i = 1; i <= NUM_OF_CIRCLES+1; i++) {
+  for (uint i = 1; i < NUM_OF_CIRCLES+1; i++) {
     end += CIRCLES[i];
   }
 
@@ -245,9 +457,10 @@ void ringid_in_to_out(int delay_val) {
   // Serial.println();
 }
 
+
 /*
-Sees välja koos värviga
-*/
+ * Sees välja koos värviga
+ */
 void ringid_in_to_out(int delay_val, uint32_t colour) {
   uint start = 0;
   uint end = 0;
@@ -285,12 +498,12 @@ void ringid_in_to_out(int delay_val, uint32_t colour) {
   // Serial.println();
 }
 
+
 /*
 Tester
 One by one RGB
 https://github.com/tigoe/NeoPixel_examples/blob/main/NeoPixelTester/NeoPixelTester.ino
 */
-
 void tester(int delay_val) {
   static uint64_t color = 0xFF;  // start with blue
 
@@ -318,6 +531,7 @@ void tester(int delay_val) {
 
   pixels.clear();
 }
+
 
 /*
 
@@ -352,8 +566,8 @@ void hex_color() {
 
 
 /*
-Üks LED sisse ja välja
-*/
+ * Üks LED sisse ja välja
+ */
 void bounce(int delay_val) {
   static int thisPixel = 0;
   static int lastPixel = LED_COUNT-1;
@@ -378,6 +592,9 @@ void bounce(int delay_val) {
   delay(delay_val);
 }
 
+/*
+ *
+ */
 void fade_all(int max_brightness) {
   int r = random(255);
   int g = random(255);
@@ -410,6 +627,7 @@ void fade_all(int max_brightness) {
   }
   delay(100);
 }
+
 
 /*
 https://github.com/tigoe/NeoPixel_examples/blob/main/NeoPixelFadeChase/NeoPixelFadeChase.ino
@@ -467,6 +685,7 @@ void fade_chase() {
   // delay 0.1 seconds:
   delay(100);
 }
+
 
 /*
 uint32_t color
@@ -572,6 +791,7 @@ void sektor(int delay_val) {
   pixels.clear();
 }
 
+
 /*
 kaar 1-10
 ei tööta hästi
@@ -629,6 +849,7 @@ void kaar(int kaar, int lenght, uint32_t color, int delay_val) {
     }
   }
 }
+
 
 /*
  * --------------------------------------------------
@@ -982,7 +1203,6 @@ void celestial_object() {
 /*
  *
  */
-
 void alt_ylesse(int delay_val, uint32_t colour) {
   const int arc_count = 22;
   const int max_arc_size = 19;
@@ -1079,7 +1299,6 @@ void alt_ylesse(int delay_val, uint32_t colour) {
 /*
  *
  */
-
 void breathing(int delay_val, uint32_t colour) {
   static uint start = 0;
   static uint end = 0;
@@ -1108,171 +1327,3 @@ void breathing(int delay_val, uint32_t colour) {
   }
 
 }
-
-
-/************************************************************************/
-// Core 0 setup
-void setup() {
-  Serial.begin(115200);
-
-  pixels.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
-  pixels.show();            // Turn OFF all pixels ASAP
-  pixels.setBrightness(50);  // Set BRIGHTNESS to about 1/5 (max = 255)
-
-  // if analog input pin 0 is unconnected, random analog
-  // noise will cause the call to randomSeed() to generate
-  // different seed numbers each time the sketch runs.
-  // randomSeed() will then shuffle the random function.
-  randomSeed(analogRead(0));
-
-  // 7-segment led pins
-  pinMode(A_PIN, OUTPUT);
-  pinMode(B_PIN, OUTPUT);
-  pinMode(DP_PIN, OUTPUT);
-  pinMode(C_PIN, OUTPUT);
-  pinMode(D_PIN, OUTPUT);
-  pinMode(E_PIN, OUTPUT);
-  pinMode(G_PIN, OUTPUT);
-  pinMode(F_PIN, OUTPUT);
-
-  digitalWrite(A_PIN, LOW);
-  delay(200);
-  digitalWrite(B_PIN, LOW);
-  delay(200);
-  digitalWrite(DP_PIN, LOW);
-  delay(200);
-  digitalWrite(C_PIN, LOW);
-  delay(200);
-  digitalWrite(D_PIN, LOW);
-  delay(200);
-  digitalWrite(E_PIN, LOW);
-  delay(200);
-  digitalWrite(G_PIN, LOW);
-  delay(200);
-  digitalWrite(F_PIN, LOW);
-  delay(200);
-}
-
-// Core 1 setup
-void setup1() {
-  RE.begin();
-
-  
-}
-
-// Core 0 loop
-void loop() {
-  switch (selected_program) {
-    case 1:
-      rainbow(10);
-      break;
-    case 2:
-      celestial_object();
-      break;
-    case 3:
-      tester(10);
-      break;
-    case 4:
-      alt_ylesse(100, 0x7aff18);
-      break;
-    case 5:
-      bounce(20);
-      break;
-    case 6:
-      ringid_in_to_out(100, 0xff7d00);
-      break;
-    case 7:
-      fade_all(40);
-      break;
-    case 8:
-      fade_chase();
-      break;
-    case 9:
-      // stop
-      break;
-    default:
-      celestial_object();
-      // rainbow(10);
-      break;
-  }
-
-  // strip.clear();  // all off
-
-  // ringid_out_to_in(500);
-  // ringid_in_to_out(100);
-  // ringid_in_to_out(50, (pixels.Color(20, 70, 0)));
-  // ringid_in_to_out(50, (pixels.Color(70, 20, 0)));
-  // one_by_one(100);
-  // tester(10);
-  // hex_color();
-  // bounce(20);
-  // fade_all(40);
-  // fade_chase();
-  // sektor(50);
-  // kaar(1, 5, 0xF8AA00, 75);
-
-
-  // celestial_object();
-  // ringid_in_to_out(100, 0xff7d00);
-
-  // celestial_object();
-  // ringid_in_to_out(100, 0xff7d00);
-
-  // alt_ylesse(100, 0x7aff18);
-
-  // pixels.clear();
-
-  // Fill along the length of the strip in various colors...
-  // colorWipe(strip.Color(255, 0, 0), 50);  // Red
-  // colorWipe(strip.Color(0, 255, 0), 50);  // Green
-  // colorWipe(strip.Color(0, 0, 255), 50);  // Blue
-  // rainbow(10);             // Flowing rainbow cycle along the whole strip
-  // theaterChaseRainbow(50);  // Rainbow-enhanced theaterChase variant
-}
-
-// Core 1 loop
-void loop1() {
-  // Read Rotary Encoder rotation direction
-  int re_direction = RE.read();
-
-  // Read Rotary Encoder rotation speed:
-  uint16_t re_speed = RE.speed();
-
-  // Read Rotary Encoder button:
-  int button = RE.button();
-
-  if (selected_program > 10) {
-    selected_program = 0;
-  }
-  if (selected_program < 0) {
-    selected_program = 9;
-  }
-
-  // If Rotary Encoder is rotated:
-  // CW = clockwise rotation
-  // CCW = counterclockwise rotation
-  if (re_direction == DIR_CW) {
-    Serial.print("Direction ");
-    Serial.print("->");
-    Serial.print(" Speed:");
-    Serial.println(re_speed);
-    selected_program++;
-    Serial.print("Selected program ");
-    Serial.println(selected_program);
-  } else if (re_direction == DIR_CCW) {
-    Serial.print("Direction ");
-    Serial.print("<-");
-    Serial.print(" Speed:");
-    Serial.println(re_speed);
-    selected_program--;
-    Serial.print("Selected program ");
-    Serial.println(selected_program);
-  }
-
-  // If Rotary Encoder button is pressed:
-  if (button) {
-    Serial.println("Button!");
-  }
-}
-
-
