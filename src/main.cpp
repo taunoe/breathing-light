@@ -112,6 +112,8 @@ void celestial_object();
 void alt_ylesse(int delay_val, uint32_t colour);
 void breathing(int delay_val, uint32_t colour);
 
+void test_7_segment(uint64_t wait);
+void display_number(char num);
 
 
 /*****************************************
@@ -142,17 +144,11 @@ void setup() {
 
   uint64_t now = millis();
 
-
-  for (int i = 0; i < 8; i++) {
-    digitalWrite(SEVEN_SEG_PINS[i], HIGH);
-    delay(200);
+  test_7_segment(300);
+  for (size_t i = 0; i < 10; i++) {
+    delay(500);
+    display_number(i);
   }
-
-  for (int i = 0; i < 8; i++) {
-    digitalWrite(SEVEN_SEG_PINS[i], LOW);
-    delay(200);
-  }
-
 }
 
 /*****************************************
@@ -160,7 +156,6 @@ void setup() {
  *****************************************/
 void setup1() {
   RE.begin();
-
 }
 
 /*****************************************
@@ -196,12 +191,12 @@ void loop() {
       // stop
       break;
     default:
-      // celestial_object();
+      celestial_object();
       // rainbow(10);
-      static int i = 0;
-      Serial.println(i);
-      i++;
-      delay(300);
+      //static int i = 0;
+      //Serial.println(i);
+      //i++;
+      //delay(300);
       break;
   }
 
@@ -1326,4 +1321,153 @@ void breathing(int delay_val, uint32_t colour) {
     end -= CIRCLES[i];
   }
 
+}
+
+
+/*
+ * Turn ON/OFF 7-segment LED elements
+ * Non blocking
+ */
+void test_7_segment(uint64_t wait) {
+  static uint64_t prev_on_time = 0;
+  static uint64_t prev_off_time = 0;
+  static bool turn_on_ready = false;
+  static bool turn_off_ready = false;
+  static int i = 0;
+
+  // Turn ON
+  while (!turn_on_ready) {
+    Serial.print(".");
+    if ((millis() - prev_on_time) >= wait) {
+      prev_on_time = millis();
+      digitalWrite(SEVEN_SEG_PINS[i], HIGH);
+      i++;
+      if (i == 8) {
+        turn_on_ready = true;
+        i = 0;
+      }
+    }
+  }
+  // Turn OFF
+  while (!turn_off_ready) {
+    Serial.print(".");
+    if ((millis() - prev_off_time) >= wait) {
+      prev_off_time = millis();
+      digitalWrite(SEVEN_SEG_PINS[i], LOW);
+      i++;
+      if (i == 8) {
+        turn_off_ready = true;
+        i = 0;
+      }
+    }
+  }
+}
+
+
+void display_number(char num) {
+  switch (num) {
+  case 0:
+    digitalWrite(A_PIN, HIGH);
+    digitalWrite(B_PIN, HIGH);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, HIGH);
+    digitalWrite(E_PIN, HIGH);
+    digitalWrite(F_PIN, HIGH);
+    digitalWrite(G_PIN, LOW);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 1:
+    digitalWrite(A_PIN, LOW);
+    digitalWrite(B_PIN, HIGH);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, LOW);
+    digitalWrite(E_PIN, LOW);
+    digitalWrite(F_PIN, LOW);
+    digitalWrite(G_PIN, LOW);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 2:
+    digitalWrite(A_PIN, HIGH);
+    digitalWrite(B_PIN, HIGH);
+    digitalWrite(C_PIN, LOW);
+    digitalWrite(D_PIN, HIGH);
+    digitalWrite(E_PIN, HIGH);
+    digitalWrite(F_PIN, LOW);
+    digitalWrite(G_PIN, HIGH);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 3:
+    digitalWrite(A_PIN, HIGH);
+    digitalWrite(B_PIN, HIGH);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, HIGH);
+    digitalWrite(E_PIN, LOW);
+    digitalWrite(F_PIN, LOW);
+    digitalWrite(G_PIN, HIGH);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 4:
+    digitalWrite(A_PIN, LOW);
+    digitalWrite(B_PIN, HIGH);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, LOW);
+    digitalWrite(E_PIN, LOW);
+    digitalWrite(F_PIN, HIGH);
+    digitalWrite(G_PIN, HIGH);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 5:
+    digitalWrite(A_PIN, HIGH);
+    digitalWrite(B_PIN, LOW);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, HIGH);
+    digitalWrite(E_PIN, LOW);
+    digitalWrite(F_PIN, HIGH);
+    digitalWrite(G_PIN, HIGH);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 6:
+    digitalWrite(A_PIN, HIGH);
+    digitalWrite(B_PIN, LOW);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, HIGH);
+    digitalWrite(E_PIN, HIGH);
+    digitalWrite(F_PIN, HIGH);
+    digitalWrite(G_PIN, HIGH);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 7:
+    digitalWrite(A_PIN, HIGH);
+    digitalWrite(B_PIN, HIGH);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, LOW);
+    digitalWrite(E_PIN, LOW);
+    digitalWrite(F_PIN, LOW);
+    digitalWrite(G_PIN, LOW);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 8:
+    digitalWrite(A_PIN, HIGH);
+    digitalWrite(B_PIN, HIGH);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, HIGH);
+    digitalWrite(E_PIN, HIGH);
+    digitalWrite(F_PIN, HIGH);
+    digitalWrite(G_PIN, HIGH);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  case 9:
+    digitalWrite(A_PIN, HIGH);
+    digitalWrite(B_PIN, HIGH);
+    digitalWrite(C_PIN, HIGH);
+    digitalWrite(D_PIN, HIGH);
+    digitalWrite(E_PIN, LOW);
+    digitalWrite(F_PIN, HIGH);
+    digitalWrite(G_PIN, HIGH);
+    digitalWrite(DP_PIN, LOW);
+    break;
+  
+  default:
+    break;
+  }
 }
