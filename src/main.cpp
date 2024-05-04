@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Created:     24.12.2023
- * Last edited: 30.04.2024
+ * Last edited: 04.05.2024
  * Project:     The Breathing Light
  * 
  * Hardware:
@@ -21,6 +21,7 @@
 // #include "Adafruit_NeoMatrix.h"
 #include "Adafruit_NeoPixel.h"
 #include "Tauno_rotary_encoder.h"
+#include "Tauno_Display_Char.h"
 
 // RGB LED strip
 const int LED_PIN = 6;
@@ -40,9 +41,9 @@ const int  E_PIN = 26;  // 6
 const int  G_PIN = 27;  // 7
 const int  F_PIN = 28;  // 8
 
-const int SEVEN_SEG_PINS[8] = {
-  A_PIN, B_PIN, DP_PIN, C_PIN, D_PIN, E_PIN, G_PIN, F_PIN
-};
+
+// 7-segment object
+Tauno_Display_Char SEG(A_PIN, B_PIN, DP_PIN, C_PIN, D_PIN, E_PIN, G_PIN, F_PIN);
 
 // Declare Rotary Encoder object:
 Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
@@ -112,8 +113,7 @@ void celestial_object();
 void alt_ylesse(int delay_val, uint32_t colour);
 void breathing(int delay_val, uint32_t colour);
 
-void test_7_segment(uint64_t wait);
-void display_number(char num);
+
 
 
 /*****************************************
@@ -132,6 +132,7 @@ void setup() {
   // randomSeed() will then shuffle the random function.
   randomSeed(analogRead(0));
 
+/*
   // 7-segment led pins
   pinMode(A_PIN, OUTPUT);
   pinMode(B_PIN, OUTPUT);
@@ -149,6 +150,17 @@ void setup() {
     delay(500);
     display_number(i);
   }
+  delay(500);
+    display_number(CLEAR);
+  */
+  SEG.begin();
+  SEG.test(300);
+  SEG.display('A');
+  delay(300);
+  SEG.display('.');
+  delay(300);
+  SEG.display('B');
+  delay(300);
 }
 
 /*****************************************
@@ -164,33 +176,43 @@ void setup1() {
 void loop() {
   switch (selected_program) {
     case 1:
+      SEG.display(1);
       rainbow(10);
       break;
     case 2:
+      SEG.display(2);
       celestial_object();
       break;
     case 3:
+      SEG.display(3);
       tester(10);
       break;
     case 4:
+      SEG.display(4);
       alt_ylesse(100, 0x7aff18);
       break;
     case 5:
+      SEG.display(5);
       bounce(20);
       break;
     case 6:
+      SEG.display(6);
       ringid_in_to_out(100, 0xff7d00);
       break;
     case 7:
+      SEG.display(7);
       fade_all(40);
       break;
     case 8:
+      SEG.display(8);
       fade_chase();
       break;
     case 9:
+      SEG.display(9);
       // stop
       break;
     default:
+      SEG.display(0);
       celestial_object();
       // rainbow(10);
       //static int i = 0;
@@ -1320,154 +1342,5 @@ void breathing(int delay_val, uint32_t colour) {
     start -= CIRCLES[i-1];
     end -= CIRCLES[i];
   }
-
 }
 
-
-/*
- * Turn ON/OFF 7-segment LED elements
- * Non blocking
- */
-void test_7_segment(uint64_t wait) {
-  static uint64_t prev_on_time = 0;
-  static uint64_t prev_off_time = 0;
-  static bool turn_on_ready = false;
-  static bool turn_off_ready = false;
-  static int i = 0;
-
-  // Turn ON
-  while (!turn_on_ready) {
-    Serial.print(".");
-    if ((millis() - prev_on_time) >= wait) {
-      prev_on_time = millis();
-      digitalWrite(SEVEN_SEG_PINS[i], HIGH);
-      i++;
-      if (i == 8) {
-        turn_on_ready = true;
-        i = 0;
-      }
-    }
-  }
-  // Turn OFF
-  while (!turn_off_ready) {
-    Serial.print(".");
-    if ((millis() - prev_off_time) >= wait) {
-      prev_off_time = millis();
-      digitalWrite(SEVEN_SEG_PINS[i], LOW);
-      i++;
-      if (i == 8) {
-        turn_off_ready = true;
-        i = 0;
-      }
-    }
-  }
-}
-
-
-void display_number(char num) {
-  switch (num) {
-  case 0:
-    digitalWrite(A_PIN, HIGH);
-    digitalWrite(B_PIN, HIGH);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, HIGH);
-    digitalWrite(E_PIN, HIGH);
-    digitalWrite(F_PIN, HIGH);
-    digitalWrite(G_PIN, LOW);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 1:
-    digitalWrite(A_PIN, LOW);
-    digitalWrite(B_PIN, HIGH);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, LOW);
-    digitalWrite(E_PIN, LOW);
-    digitalWrite(F_PIN, LOW);
-    digitalWrite(G_PIN, LOW);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 2:
-    digitalWrite(A_PIN, HIGH);
-    digitalWrite(B_PIN, HIGH);
-    digitalWrite(C_PIN, LOW);
-    digitalWrite(D_PIN, HIGH);
-    digitalWrite(E_PIN, HIGH);
-    digitalWrite(F_PIN, LOW);
-    digitalWrite(G_PIN, HIGH);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 3:
-    digitalWrite(A_PIN, HIGH);
-    digitalWrite(B_PIN, HIGH);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, HIGH);
-    digitalWrite(E_PIN, LOW);
-    digitalWrite(F_PIN, LOW);
-    digitalWrite(G_PIN, HIGH);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 4:
-    digitalWrite(A_PIN, LOW);
-    digitalWrite(B_PIN, HIGH);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, LOW);
-    digitalWrite(E_PIN, LOW);
-    digitalWrite(F_PIN, HIGH);
-    digitalWrite(G_PIN, HIGH);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 5:
-    digitalWrite(A_PIN, HIGH);
-    digitalWrite(B_PIN, LOW);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, HIGH);
-    digitalWrite(E_PIN, LOW);
-    digitalWrite(F_PIN, HIGH);
-    digitalWrite(G_PIN, HIGH);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 6:
-    digitalWrite(A_PIN, HIGH);
-    digitalWrite(B_PIN, LOW);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, HIGH);
-    digitalWrite(E_PIN, HIGH);
-    digitalWrite(F_PIN, HIGH);
-    digitalWrite(G_PIN, HIGH);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 7:
-    digitalWrite(A_PIN, HIGH);
-    digitalWrite(B_PIN, HIGH);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, LOW);
-    digitalWrite(E_PIN, LOW);
-    digitalWrite(F_PIN, LOW);
-    digitalWrite(G_PIN, LOW);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 8:
-    digitalWrite(A_PIN, HIGH);
-    digitalWrite(B_PIN, HIGH);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, HIGH);
-    digitalWrite(E_PIN, HIGH);
-    digitalWrite(F_PIN, HIGH);
-    digitalWrite(G_PIN, HIGH);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  case 9:
-    digitalWrite(A_PIN, HIGH);
-    digitalWrite(B_PIN, HIGH);
-    digitalWrite(C_PIN, HIGH);
-    digitalWrite(D_PIN, HIGH);
-    digitalWrite(E_PIN, LOW);
-    digitalWrite(F_PIN, HIGH);
-    digitalWrite(G_PIN, HIGH);
-    digitalWrite(DP_PIN, LOW);
-    break;
-  
-  default:
-    break;
-  }
-}
