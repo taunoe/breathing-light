@@ -35,7 +35,7 @@ int last_RE_state = 0;
 uint32_t last_debounce_time = 0;
 uint32_t debounce_delay = 50;
 bool change = false;
-const int NUM_OF_PROGRAMS = 17;
+
 
 // Declare Rotary Encoder object:
 Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
@@ -129,17 +129,13 @@ void setup() {
 
   pixels.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   pixels.show();            // Turn OFF all pixels ASAP
-  pixels.setBrightness(20);  // Set BRIGHTNESS to about 1/5 (max = 255)
+  pixels.setBrightness(30);  // 20 == Set BRIGHTNESS to about 1/5 (max = 255)
 
   // if analog input pin 0 is unconnected, random analog
   // noise will cause the call to randomSeed() to generate
   // different seed numbers each time the sketch runs.
   // randomSeed() will then shuffle the random function.
   randomSeed(analogRead(0));
-
-
-  Number.begin();    // 7-segment led pins
-  Number.test(500);  // Display all numbers and letters
 }
 
 /*****************************************
@@ -147,150 +143,63 @@ void setup() {
  *****************************************/
 void setup1() {
   RE.begin();
+  Number.begin();    // 7-segment led pins
+  Number.test(200);  // Display all numbers and letters
 }
 
 /*****************************************
  * Core 0 loop
  *****************************************/
 void loop() {
-  static int old_selected_program;
-  static uint64_t num_start_time;
-  uint64_t num_on_time = 1000;
-
-  // Turn number off after some time
-  if ((millis() - num_start_time) >= num_on_time) {
-    Serial.println("OFF time");
-    Number.clear();  // off
-  }
 
   // Select program & display number
   switch (selected_program) {  // peab loopima kogu aeg!
     case 1:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(1);
-        num_start_time = millis();
-      }
       ringid_in_to_out(50, (pixels.Color(20, 70, 0)));
       break;
     case 2:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(2);
-        num_start_time = millis();
-      }
       celestial_object();
       break;
     case 3:
-     if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(3);
-        num_start_time = millis();
-      }
       tester(10);
       break;
     case 4:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(4);
-        num_start_time = millis();
-      }
       alt_ylesse(100, 0x7aff18);
       break;
     case 5:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(5);
-        num_start_time = millis();
-      }
       bounce(20);
       break;
     case 6:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(6);
-        num_start_time = millis();
-      }
       ringid_in_to_out(100, 0xff7d00);
       break;
     case 7:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(7);
-        num_start_time = millis();
-      }
       fade_all(40);
       break;
     case 8:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(8);
-        num_start_time = millis();
-      }
       fade_chase();
       break;
     case 9:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(9);
-        num_start_time = millis();
-      }
       kaar(1, 5, 0xF8AA00, 75);
       break;
     case 10:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display('A');
-        num_start_time = millis();
-      }
       sektor(50);
       break;
     case 11:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display('B');
-        num_start_time = millis();
-      }
       one_by_one(100);
       break;
     case 12:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display('C');
-        num_start_time = millis();
-      }
       ringid_out_to_in(500);
       break;
     case 13:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display('D');
-        num_start_time = millis();
-      }
       rainbow(10);
       break;
     case 14:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display('E');
-        num_start_time = millis();
-      }
       theaterChaseRainbow(50);
       break;
     case 15:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display('F');
-        num_start_time = millis();
-      }
       colorWipe(pixels.Color(0, 0, 255), 50);  // Blue
       break;
     default:
-      if (selected_program != old_selected_program) {
-        old_selected_program = selected_program;
-        Number.display(0);
-        num_start_time = millis();
-      }
       celestial_object();
       break;
   }
@@ -300,6 +209,17 @@ void loop() {
  * Core 1 loop
  *****************************************/
 void loop1() {
+  static int old_selected_program;
+  static uint64_t num_start_time;
+  uint64_t num_on_time = 1500;
+  const int NUM_OF_PROGRAMS = 17;
+
+  // Turn number off after some time
+  if ((millis() - num_start_time) >= num_on_time) {
+    Serial.println("OFF time");
+    Number.clear();  // off
+  }
+
   // Read Rotary Encoder rotation direction
   int re_direction = RE.read();
 
@@ -320,21 +240,25 @@ void loop1() {
   // CW = clockwise rotation
   // CCW = counterclockwise rotation
   if (re_direction == DIR_CW) {
-    Serial.print("Direction ");
-    Serial.print("->");
     Serial.print(" Speed:");
     Serial.println(re_speed);
     selected_program++;
     Serial.print("Selected program ");
     Serial.println(selected_program);
+    num_start_time = millis();
   } else if (re_direction == DIR_CCW) {
-    Serial.print("Direction ");
-    Serial.print("<-");
     Serial.print(" Speed:");
     Serial.println(re_speed);
     selected_program--;
     Serial.print("Selected program ");
     Serial.println(selected_program);
+    num_start_time = millis();
+  }
+
+  if (selected_program != old_selected_program) {
+    old_selected_program = selected_program;
+    Number.display(selected_program);
+    num_start_time = millis();
   }
 
   // If Rotary Encoder button is pressed:

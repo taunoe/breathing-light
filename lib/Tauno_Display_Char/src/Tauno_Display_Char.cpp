@@ -172,6 +172,7 @@ void Tauno_Display_Char::display(char c) {
     digitalWrite(_G_PIN, HIGH);
     digitalWrite(_DP_PIN, LOW);
     break;
+  case 10:
   case 'a':
   case 'A':
     digitalWrite(_A_PIN, HIGH);
@@ -183,6 +184,7 @@ void Tauno_Display_Char::display(char c) {
     digitalWrite(_G_PIN, HIGH);
     digitalWrite(_DP_PIN, LOW);
     break;
+  case 11:
   case 'b':
   case 'B':
     digitalWrite(_A_PIN, LOW);
@@ -194,6 +196,7 @@ void Tauno_Display_Char::display(char c) {
     digitalWrite(_G_PIN, HIGH);
     digitalWrite(_DP_PIN, LOW);
     break;
+  case 12:
   case 'c':
   case 'C':
     digitalWrite(_A_PIN, HIGH);
@@ -205,6 +208,7 @@ void Tauno_Display_Char::display(char c) {
     digitalWrite(_G_PIN, LOW);
     digitalWrite(_DP_PIN, LOW);
     break;
+  case 13:
   case 'd':
   case 'D':
     digitalWrite(_A_PIN, LOW);
@@ -216,6 +220,7 @@ void Tauno_Display_Char::display(char c) {
     digitalWrite(_G_PIN, HIGH);
     digitalWrite(_DP_PIN, LOW);
     break;
+  case 14:
   case 'e':
   case 'E':
     digitalWrite(_A_PIN, HIGH);
@@ -227,6 +232,7 @@ void Tauno_Display_Char::display(char c) {
     digitalWrite(_G_PIN, HIGH);
     digitalWrite(_DP_PIN, LOW);
     break;
+  case 15:
   case 'f':
   case 'F':
     digitalWrite(_A_PIN, HIGH);
@@ -238,6 +244,7 @@ void Tauno_Display_Char::display(char c) {
     digitalWrite(_G_PIN, HIGH);
     digitalWrite(_DP_PIN, LOW);
     break;
+  case 16:
   case 'h':
   case 'H':
     digitalWrite(_A_PIN, LOW);
@@ -249,6 +256,7 @@ void Tauno_Display_Char::display(char c) {
     digitalWrite(_G_PIN, HIGH);
     digitalWrite(_DP_PIN, LOW);
     break;
+  case 17:
   case '.':
     digitalWrite(_A_PIN, LOW);
     digitalWrite(_B_PIN, LOW);
@@ -319,10 +327,8 @@ void Tauno_Display_Char::test(uint64_t wait) {
   }
   // Display numbers & letters
   const int num_of_letters = 17;
-  char letters[num_of_letters] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                 'A', 'B', 'C', 'd', 'E', 'F', '.'};
   for (int i = 0; i < num_of_letters; i++) {
-    display(letters[i]);
+    display(i);
     delay(wait);
   }
 }
