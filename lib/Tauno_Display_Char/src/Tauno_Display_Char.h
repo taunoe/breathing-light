@@ -1,7 +1,9 @@
 /*
  * Tauno_Diaplay_Char.h
+ *
  * Started 04.05.2024
- * Edited 04.05.2024
+ * Edited  05.05.2024
+ * 
  * Copyright 2024 Tauno Erik
  */
 

@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For Tauno_Display_Char
+#######################################
+# Class
+#######################################
+
+Tauno_Display_Char	KEYWORD1
+
+#######################################
+# Methods and Functions
+#######################################	
+
+begin			KEYWORD2
+display		    KEYWORD2
+test			KEYWORD2
+clear			KEYWORD2
+
+#######################################
+# Constants
+#######################################
+
+#DIR_NONE		LITERAL1
+#DIR_CW			LITERAL1
+#DIR_CCW		LITERAL1
+

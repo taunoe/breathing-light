@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Created:     24.12.2023
- * Last edited: 04.05.2024
+ * Last edited: 05.05.2024
  * Project:     The Breathing Light
  * 
  * Hardware:
@@ -23,15 +23,23 @@
 #include "Tauno_rotary_encoder.h"
 #include "Tauno_Display_Char.h"
 
-// RGB LED strip
-const int LED_PIN = 6;
-
 // Rotary Encoder
 const int RE_SW_PIN  = 13;
 const int RE_CLK_PIN = 15;
 const int RE_DT_PIN  = 14;
 
-// 7-SEG LED
+int selected_program = 0;
+int RE_state = 0;
+int last_RE_state = 0;
+uint32_t last_debounce_time = 0;
+uint32_t debounce_delay = 50;
+bool change = false;
+
+// Declare Rotary Encoder object:
+Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
+
+
+// 7-SEGMENT LED number
 const int  A_PIN = 18;  // 1
 const int  B_PIN = 19;  // 2
 const int DP_PIN = 20;  // 3
@@ -41,19 +49,13 @@ const int  E_PIN = 26;  // 6
 const int  G_PIN = 27;  // 7
 const int  F_PIN = 28;  // 8
 
-
 // 7-segment object
-Tauno_Display_Char SEG(A_PIN, B_PIN, DP_PIN, C_PIN, D_PIN, E_PIN, G_PIN, F_PIN);
+Tauno_Display_Char Number(A_PIN, B_PIN, DP_PIN, C_PIN,
+                          D_PIN, E_PIN, G_PIN, F_PIN);
 
-// Declare Rotary Encoder object:
-Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
 
-int selected_program = 0;
-int RE_state = 0;
-int last_RE_state = 0;
-uint32_t last_debounce_time = 0;
-uint32_t debounce_delay = 50;
-bool change = false;
+// RGB LED strip
+const int LED_PIN = 6;
 
 // LEDide arv igas ringis
 const uint CIRCLE_1_NUM = 35;
@@ -114,8 +116,6 @@ void alt_ylesse(int delay_val, uint32_t colour);
 void breathing(int delay_val, uint32_t colour);
 
 
-
-
 /*****************************************
  * Core 0 setup
  *****************************************/
@@ -132,35 +132,9 @@ void setup() {
   // randomSeed() will then shuffle the random function.
   randomSeed(analogRead(0));
 
-/*
-  // 7-segment led pins
-  pinMode(A_PIN, OUTPUT);
-  pinMode(B_PIN, OUTPUT);
-  pinMode(DP_PIN, OUTPUT);
-  pinMode(C_PIN, OUTPUT);
-  pinMode(D_PIN, OUTPUT);
-  pinMode(E_PIN, OUTPUT);
-  pinMode(G_PIN, OUTPUT);
-  pinMode(F_PIN, OUTPUT);
 
-  uint64_t now = millis();
-
-  test_7_segment(300);
-  for (size_t i = 0; i < 10; i++) {
-    delay(500);
-    display_number(i);
-  }
-  delay(500);
-    display_number(CLEAR);
-  */
-  SEG.begin();
-  SEG.test(300);
-  SEG.display('A');
-  delay(300);
-  SEG.display('.');
-  delay(300);
-  SEG.display('B');
-  delay(300);
+  Number.begin();    // 7-segment led pins
+  Number.test(500);  // Display all numbers and letters
 }
 
 /*****************************************
@@ -174,51 +148,97 @@ void setup1() {
  * Core 0 loop
  *****************************************/
 void loop() {
-  switch (selected_program) {
+  static int old_selected_program;
+  static uint64_t num_start_time;
+  uint64_t num_on_time = 1000;
+
+  // Turn number off after some time
+  if ((millis() - num_start_time) >= num_on_time) {
+    Serial.println("OFF time");
+    Number.clear();  // off
+  }
+
+  // Select program & display number
+  switch (selected_program) {  // peab loopima kogu aeg!
     case 1:
-      SEG.display(1);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(1);
+        num_start_time = millis();
+      }
       rainbow(10);
       break;
     case 2:
-      SEG.display(2);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(2);
+        num_start_time = millis();
+      }
       celestial_object();
       break;
     case 3:
-      SEG.display(3);
+     if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(3);
+        num_start_time = millis();
+      }
       tester(10);
       break;
     case 4:
-      SEG.display(4);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(4);
+        num_start_time = millis();
+      }
       alt_ylesse(100, 0x7aff18);
       break;
     case 5:
-      SEG.display(5);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(5);
+        num_start_time = millis();
+      }
       bounce(20);
       break;
     case 6:
-      SEG.display(6);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(6);
+        num_start_time = millis();
+      }
       ringid_in_to_out(100, 0xff7d00);
       break;
     case 7:
-      SEG.display(7);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(7);
+        num_start_time = millis();
+      }
       fade_all(40);
       break;
     case 8:
-      SEG.display(8);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(8);
+        num_start_time = millis();
+      }
       fade_chase();
       break;
     case 9:
-      SEG.display(9);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(9);
+        num_start_time = millis();
+      }
       // stop
       break;
     default:
-      SEG.display(0);
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display(0);
+        num_start_time = millis();
+      }
       celestial_object();
-      // rainbow(10);
-      //static int i = 0;
-      //Serial.println(i);
-      //i++;
-      //delay(300);
       break;
   }
 
@@ -229,7 +249,7 @@ void loop() {
   // ringid_in_to_out(50, (pixels.Color(20, 70, 0)));
   // ringid_in_to_out(50, (pixels.Color(70, 20, 0)));
   // one_by_one(100);
-  // tester(10);
+  // tester(if (selected_program != old_selected_program) {
   // hex_color();
   // bounce(20);
   // fade_all(40);
