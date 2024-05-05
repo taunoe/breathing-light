@@ -22,6 +22,7 @@
 #include "Adafruit_NeoPixel.h"
 #include "Tauno_rotary_encoder.h"
 #include "Tauno_Display_Char.h"
+#include "Tauno_RGBLED_Wheel.h"
 
 // Rotary Encoder
 const int RE_SW_PIN  = 13;
@@ -34,6 +35,7 @@ int last_RE_state = 0;
 uint32_t last_debounce_time = 0;
 uint32_t debounce_delay = 50;
 bool change = false;
+const int NUM_OF_PROGRAMS = 17;
 
 // Declare Rotary Encoder object:
 Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
@@ -57,7 +59,8 @@ Tauno_Display_Char Number(A_PIN, B_PIN, DP_PIN, C_PIN,
 // RGB LED strip
 const int LED_PIN = 6;
 
-// LEDide arv igas ringis
+// Number of LEDs in a circle,
+// from outside to inside
 const uint CIRCLE_1_NUM = 35;
 const uint CIRCLE_2_NUM = 35;
 const uint CIRCLE_3_NUM = 35;
@@ -70,11 +73,13 @@ const uint CIRCLE_9_NUM = 7;
 
 const uint NUM_OF_CIRCLES = 9;
 
-const uint CIRCLES[NUM_OF_CIRCLES + 1] = {0, CIRCLE_1_NUM, CIRCLE_2_NUM,
-                                      CIRCLE_3_NUM, CIRCLE_4_NUM,
-                                      CIRCLE_5_NUM, CIRCLE_6_NUM,
-                                      CIRCLE_7_NUM, CIRCLE_8_NUM,
-                                      CIRCLE_9_NUM};
+const uint CIRCLES[NUM_OF_CIRCLES + 1] = {
+  0,
+  CIRCLE_1_NUM, CIRCLE_2_NUM,
+  CIRCLE_3_NUM, CIRCLE_4_NUM,
+  CIRCLE_5_NUM, CIRCLE_6_NUM,
+  CIRCLE_7_NUM, CIRCLE_8_NUM,
+  CIRCLE_9_NUM};
 
 // Kokku LEDe
 const uint LED_COUNT = CIRCLE_1_NUM + CIRCLE_2_NUM + CIRCLE_3_NUM
@@ -166,7 +171,7 @@ void loop() {
         Number.display(1);
         num_start_time = millis();
       }
-      rainbow(10);
+      ringid_in_to_out(50, (pixels.Color(20, 70, 0)));
       break;
     case 2:
       if (selected_program != old_selected_program) {
@@ -230,7 +235,55 @@ void loop() {
         Number.display(9);
         num_start_time = millis();
       }
-      // stop
+      kaar(1, 5, 0xF8AA00, 75);
+      break;
+    case 10:
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display('A');
+        num_start_time = millis();
+      }
+      sektor(50);
+      break;
+    case 11:
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display('B');
+        num_start_time = millis();
+      }
+      one_by_one(100);
+      break;
+    case 12:
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display('C');
+        num_start_time = millis();
+      }
+      ringid_out_to_in(500);
+      break;
+    case 13:
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display('D');
+        num_start_time = millis();
+      }
+      rainbow(10);
+      break;
+    case 14:
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display('E');
+        num_start_time = millis();
+      }
+      theaterChaseRainbow(50);
+      break;
+    case 15:
+      if (selected_program != old_selected_program) {
+        old_selected_program = selected_program;
+        Number.display('F');
+        num_start_time = millis();
+      }
+      colorWipe(pixels.Color(0, 0, 255), 50);  // Blue
       break;
     default:
       if (selected_program != old_selected_program) {
@@ -241,39 +294,6 @@ void loop() {
       celestial_object();
       break;
   }
-
-  // strip.clear();  // all off
-
-  // ringid_out_to_in(500);
-  // ringid_in_to_out(100);
-  // ringid_in_to_out(50, (pixels.Color(20, 70, 0)));
-  // ringid_in_to_out(50, (pixels.Color(70, 20, 0)));
-  // one_by_one(100);
-  // tester(if (selected_program != old_selected_program) {
-  // hex_color();
-  // bounce(20);
-  // fade_all(40);
-  // fade_chase();
-  // sektor(50);
-  // kaar(1, 5, 0xF8AA00, 75);
-
-
-  // celestial_object();
-  // ringid_in_to_out(100, 0xff7d00);
-
-  // celestial_object();
-  // ringid_in_to_out(100, 0xff7d00);
-
-  // alt_ylesse(100, 0x7aff18);
-
-  // pixels.clear();
-
-  // Fill along the length of the strip in various colors...
-  // colorWipe(strip.Color(255, 0, 0), 50);  // Red
-  // colorWipe(strip.Color(0, 255, 0), 50);  // Green
-  // colorWipe(strip.Color(0, 0, 255), 50);  // Blue
-  // rainbow(10);             // Flowing rainbow cycle along the whole strip
-  // theaterChaseRainbow(50);  // Rainbow-enhanced theaterChase variant
 }
 
 /*****************************************
@@ -289,11 +309,11 @@ void loop1() {
   // Read Rotary Encoder button:
   int button = RE.button();
 
-  if (selected_program > 10) {
+  if (selected_program > NUM_OF_PROGRAMS) {
     selected_program = 0;
   }
   if (selected_program < 0) {
-    selected_program = 9;
+    selected_program = NUM_OF_PROGRAMS;
   }
 
   // If Rotary Encoder is rotated:
