@@ -18,7 +18,6 @@
 
 #include <Arduino.h>
 #include "Adafruit_GFX.h"
-// #include "Adafruit_NeoMatrix.h"
 #include "Adafruit_NeoPixel.h"
 #include "Tauno_rotary_encoder.h"
 #include "Tauno_Display_Char.h"
