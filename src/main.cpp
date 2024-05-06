@@ -21,7 +21,9 @@
 #include "Adafruit_NeoPixel.h"
 #include "Tauno_rotary_encoder.h"
 #include "Tauno_Display_Char.h"
-#include "Tauno_RGBLED_Wheel.h"
+//#include "Tauno_RGBLED_Wheel.h"
+
+
 
 // Rotary Encoder
 const int RE_SW_PIN  = 13;
@@ -85,8 +87,12 @@ const uint LED_COUNT = CIRCLE_1_NUM + CIRCLE_2_NUM + CIRCLE_3_NUM
                      + CIRCLE_4_NUM + CIRCLE_5_NUM + CIRCLE_6_NUM
                      + CIRCLE_7_NUM + CIRCLE_8_NUM + CIRCLE_9_NUM;
 
-// Declare our NeoPixel strip object:
+//Tauno_RGBLED_Wheel Wheel(LED_PIN);
+
+// Declare our NeoPixel strip object
+
 Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+
 // Argument 1 = Number of pixels in NeoPixel strip
 // Argument 2 = Arduino pin number (most are valid)
 // Argument 3 = Pixel type flags, add together as needed:
@@ -125,6 +131,7 @@ void breathing(int delay_val, uint32_t colour);
  *****************************************/
 void setup() {
   Serial.begin(115200);
+  //Wheel.begin();
 
   pixels.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   pixels.show();            // Turn OFF all pixels ASAP
@@ -155,48 +162,63 @@ void loop() {
   switch (selected_program) {  // peab loopima kogu aeg!
     case 1:
       ringid_in_to_out(50, (pixels.Color(20, 70, 0)));
+      // Wheel.led_on(1, 0xff7aff18);
       break;
     case 2:
       celestial_object();
+      // Wheel.led_on(2, 0xff7aff18);
       break;
     case 3:
       tester(10);
+      // Wheel.led_on(3, 0xff7aff18);
       break;
     case 4:
       alt_ylesse(100, 0x7aff18);
+      // Wheel.led_on(4, 0xff7aff18);
       break;
     case 5:
       bounce(20);
+      // Wheel.led_on(5, 0xffff7aff18);
       break;
     case 6:
       ringid_in_to_out(100, 0xff7d00);
+      // Wheel.led_on(6, 0xff7aff18);
       break;
     case 7:
       fade_all(40);
+      // Wheel.led_on(7, 0xff7aff18);
       break;
     case 8:
       fade_chase();
+      // Wheel.led_on(8, 0xff7aff18);
       break;
     case 9:
       kaar(1, 5, 0xF8AA00, 75);
+      // Wheel.led_on(9, 0xff7aff18);
       break;
     case 10:
       sektor(50);
+      // Wheel.led_on(10, 0xff7aff18);
       break;
     case 11:
       one_by_one(100);
+      // Wheel.led_on(11, 0xff7aff18);
       break;
     case 12:
       ringid_out_to_in(500);
+      // Wheel.led_on(12, 0xff7aff18);
       break;
     case 13:
       rainbow(10);
+      // Wheel.led_on(13, 0xff7aff18);
       break;
     case 14:
       theaterChaseRainbow(50);
+      //Wheel.led_on(14, 0xff7aff18);
       break;
     case 15:
       colorWipe(pixels.Color(0, 0, 255), 50);  // Blue
+      //Wheel.led_on(15, 0xff7aff18);
       break;
     default:
       celestial_object();
@@ -215,7 +237,6 @@ void loop1() {
 
   // Turn number off after some time
   if ((millis() - num_start_time) >= num_on_time) {
-    Serial.println("OFF time");
     Number.clear();  // off
   }
 
@@ -347,9 +368,9 @@ void theaterChaseRainbow(int wait) {
 }
 
 
-/*
- * Ükshaaval kõik
- */
+//
+// Ükshaaval kõik
+//
 void one_by_one(int delay_val) {
   pixels.clear();
   for (uint i = 0; i < LED_COUNT; i++) {
@@ -364,9 +385,9 @@ void one_by_one(int delay_val) {
 }
 
 
-/*
- * Väljast sisse
- */
+//
+// Väljast sisse
+//
 void ringid_out_to_in(int delay_val) {
   uint start = 0;
   uint end = 0;
@@ -397,9 +418,9 @@ void ringid_out_to_in(int delay_val) {
 }
 
 
-/*
- * Seest välja
- */
+//
+// Seest välja
+//
 void ringid_in_to_out(int delay_val) {
   uint start = 0;
   uint end = 0;
@@ -438,9 +459,9 @@ void ringid_in_to_out(int delay_val) {
 }
 
 
-/*
- * Sees välja koos värviga
- */
+//
+// Sees välja koos värviga
+//
 void ringid_in_to_out(int delay_val, uint32_t colour) {
   uint start = 0;
   uint end = 0;
@@ -479,11 +500,11 @@ void ringid_in_to_out(int delay_val, uint32_t colour) {
 }
 
 
-/*
-Tester
-One by one RGB
-https://github.com/tigoe/NeoPixel_examples/blob/main/NeoPixelTester/NeoPixelTester.ino
-*/
+
+//Tester
+//One by one RGB
+//https://github.com/tigoe/NeoPixel_examples/blob/main/NeoPixelTester/NeoPixelTester.ino
+
 void tester(int delay_val) {
   static uint64_t color = 0xFF;  // start with blue
 
@@ -513,9 +534,9 @@ void tester(int delay_val) {
 }
 
 
-/*
 
-*/
+
+
 void hex_color() {
   static uint32_t color = 0x00FF00;
  /*
@@ -529,6 +550,7 @@ void hex_color() {
     0x000077FF is teal
     0x003300FF is violet
   */
+ 
   Serial.println(color, HEX);
 
   // loop over all the pixels:
@@ -545,9 +567,9 @@ void hex_color() {
 }
 
 
-/*
- * Üks LED sisse ja välja
- */
+//
+// Üks LED sisse ja välja
+//
 void bounce(int delay_val) {
   static int thisPixel = 0;
   static int lastPixel = LED_COUNT-1;
@@ -572,9 +594,9 @@ void bounce(int delay_val) {
   delay(delay_val);
 }
 
-/*
- *
- */
+//
+//
+//
 void fade_all(int max_brightness) {
   int r = random(255);
   int g = random(255);
@@ -609,9 +631,9 @@ void fade_all(int max_brightness) {
 }
 
 
-/*
-https://github.com/tigoe/NeoPixel_examples/blob/main/NeoPixelFadeChase/NeoPixelFadeChase.ino
-*/
+
+//https://github.com/tigoe/NeoPixel_examples/blob/main/NeoPixelFadeChase/NeoPixelFadeChase.ino
+
 void fade_chase() {
   const int trailLength = LED_COUNT/12;  // length of the fading trail
   static uint32_t trailColor[LED_COUNT];  // array of colors for the trail
@@ -667,9 +689,9 @@ void fade_chase() {
 }
 
 
-/*
-uint32_t color
-*/
+
+//uint32_t color
+
 void sektor(int delay_val) {
   static uint8_t r = 100;
   static uint8_t g = 0;
@@ -772,10 +794,10 @@ void sektor(int delay_val) {
 }
 
 
-/*
-kaar 1-10
-ei tööta hästi
-*/
+
+//kaar 1-10
+//ei tööta hästi
+
 void kaar(int kaar, int lenght, uint32_t color, int delay_val) {
   static uint64_t previous_millis = 0;
   static int circle_start = 0;
@@ -831,10 +853,9 @@ void kaar(int kaar, int lenght, uint32_t color, int delay_val) {
 }
 
 
-/*
- * --------------------------------------------------
- * --- Celestial Object -----------------------------
- */
+
+ // --- Celestial Object -----------------------------
+
 void celestial_object() {
   static uint32_t LED_colors[LED_COUNT] = {0};
   static bool initialize = true;
@@ -1180,9 +1201,7 @@ void celestial_object() {
 }
 
 
-/*
- *
- */
+
 void alt_ylesse(int delay_val, uint32_t colour) {
   const int arc_count = 22;
   const int max_arc_size = 19;
@@ -1276,9 +1295,7 @@ void alt_ylesse(int delay_val, uint32_t colour) {
 }
 
 
-/*
- *
- */
+
 void breathing(int delay_val, uint32_t colour) {
   static uint start = 0;
   static uint end = 0;
@@ -1306,4 +1323,3 @@ void breathing(int delay_val, uint32_t colour) {
     end -= CIRCLES[i];
   }
 }
-

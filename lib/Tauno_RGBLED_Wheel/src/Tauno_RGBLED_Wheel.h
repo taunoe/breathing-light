@@ -11,18 +11,35 @@
 #define LIB_TAUNO_RGBLED_WHEEL_SRC_TAUNO_RGBLED_WHEEL_H_
 
 #include <Arduino.h>
+#include "Adafruit_GFX.h"
+#include "Adafruit_NeoPixel.h"
+
+#define WHEEL_NUM_OF_CIRCLES  9
+// LEDs from outside to inside
+#define WHEEL_CIRCLE_1_LEDS  35
+#define WHEEL_CIRCLE_2_LEDS  35
+#define WHEEL_CIRCLE_3_LEDS  35
+#define WHEEL_CIRCLE_4_LEDS  28
+#define WHEEL_CIRCLE_5_LEDS  28
+#define WHEEL_CIRCLE_6_LEDS  21
+#define WHEEL_CIRCLE_7_LEDS  21
+#define WHEEL_CIRCLE_8_LEDS  14
+#define WHEEL_CIRCLE_9_LEDS   7
+#define WHEEL_LED_COUNT     224  // Total
 
 class Tauno_RGBLED_Wheel {
  private:
     uint8_t _LED_PIN;
 
+    Adafruit_NeoPixel pixels;
+
  public:
-    Tauno_RGBLED_Wheel(
-        uint8_t LED_PIN);
+    Tauno_RGBLED_Wheel(uint8_t LED_PIN);
 
     ~Tauno_RGBLED_Wheel();
 
-    void begin();
+    bool begin();
+    bool led_on(int index, uint32_t color);
 };
 
 #endif  // LIB_TAUNO_RGBLED_WHEEL_SRC_TAUNO_RGBLED_WHEEL_H_

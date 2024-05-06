@@ -281,7 +281,6 @@ void Tauno_Display_Char::display(char c) {
 }
 
 void Tauno_Display_Char::clear() {
-  Serial.println("CLEAR");
   digitalWrite(_A_PIN, LOW);
   digitalWrite(_B_PIN, LOW);
   digitalWrite(_C_PIN, LOW);

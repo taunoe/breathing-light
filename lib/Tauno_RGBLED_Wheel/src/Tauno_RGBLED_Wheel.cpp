@@ -12,13 +12,36 @@
 
 Tauno_RGBLED_Wheel::Tauno_RGBLED_Wheel(
     uint8_t LED_PIN)
-    : _LED_PIN(LED_PIN)
+    : _LED_PIN(LED_PIN),
+    pixels(WHEEL_LED_COUNT, _LED_PIN, NEO_GRB + NEO_KHZ800)
     {}
 
 Tauno_RGBLED_Wheel::~Tauno_RGBLED_Wheel() {
     // Cleanup
 }
 
-void Tauno_RGBLED_Wheel::begin() {
-    pinMode(_LED_PIN, OUTPUT);
+bool Tauno_RGBLED_Wheel::begin() {
+    //pinMode(_LED_PIN, OUTPUT);
+    pixels.begin();            // INITIALIZE NeoPixel strip object (REQUIRED)
+    pixels.show();             // Turn OFF all pixels ASAP
+    pixels.setBrightness(30);  // 20 == Set BRIGHTNESS to about 1/5 (max = 255)
+
+    return true;
+}
+
+bool Tauno_RGBLED_Wheel::led_on(int index, uint32_t color) {
+    if (index > WHEEL_LED_COUNT) {
+        return false;
+    }
+
+    int old = pixels.getPixelColor(index);
+
+    if (old != color) {
+        Serial.print("index=");
+        Serial.println(index);
+        pixels.setPixelColor(index, color);
+        pixels.show();
+        return true;
+    }
+    return true;
 }
