@@ -2,7 +2,7 @@
  * Tauno_RGBLED_Wheel.h
  *
  * Started 05.05.2024
- * Edited  05.05.2024
+ * Edited  07.05.2024
  * 
  * Copyright 2024 Tauno Erik
  */
@@ -26,6 +26,8 @@
 #define WHEEL_CIRCLE_8_LEDS  14
 #define WHEEL_CIRCLE_9_LEDS   7
 #define WHEEL_LED_COUNT     224  // Total
+
+#define WHEEL_BRIGHTNESS     50  // 0-255
 
 class Tauno_RGBLED_Wheel {
  private:
