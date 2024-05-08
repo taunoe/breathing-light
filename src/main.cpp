@@ -1,19 +1,18 @@
 /*
  * File:        main.cpp
  * Copyright    Tauno Erik
- * Created:     24.12.2023
- * Last edited: 07.05.2024
- * Project:     The Breathing Light
+ * Started:     24.12.2023
+ * Last edited: 08.05.2024
+ * Project name:The Breathing Light
+ * GitHub:      https://github.com/taunoe/breathing-light
  * 
- * Hardware:
- *   Pi Pico
+ * Description:
  *
  *
  *
  *
  *
  * 
- * Vaata ka: https://github.com/FastLED/FastLED
  */
 
 #include <Arduino.h>
@@ -22,7 +21,7 @@
 #include "Tauno_RGBLED_Wheel.h"   // RGB LEDs
 
 
-// Rotary Encoder
+// Rotary Encoder pins
 const int RE_SW_PIN  = 13;
 const int RE_CLK_PIN = 15;
 const int RE_DT_PIN  = 14;
@@ -110,12 +109,8 @@ void setup1() {
 void loop() {
   delay(1);  // !! Must be, otherwise errors!!
 
-  // Select program & display number
   switch (selected_program) {  // peab loopima kogu aeg!
-    case 0:
-      Wheel.led_on(0, 0x6bfc00);
-      break;
-    case 1:
+    case 1:  // Breathing technique 1
       Wheel.led_on(1, 0xd5fc00);
       break;
     case 2:
@@ -163,6 +158,7 @@ void loop() {
     case 16:
       Wheel.led_on(16, 0x7aff18);
       break;
+    case 0: // OFF mode
     default:
       break;
   }
