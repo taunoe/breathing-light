@@ -160,6 +160,8 @@ void loop() {
       break;
     case 0: // OFF mode
     default:
+      Wheel.off();
+      // Sleep?
       break;
   }
 }

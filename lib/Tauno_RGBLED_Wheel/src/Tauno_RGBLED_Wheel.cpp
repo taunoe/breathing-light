@@ -46,3 +46,9 @@ bool Tauno_RGBLED_Wheel::led_on(int index, uint32_t color) {
     }
     return true;
 }
+
+bool Tauno_RGBLED_Wheel::off() {
+    pixels.clear();
+    pixels.show();
+    return true;
+}

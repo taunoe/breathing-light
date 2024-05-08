@@ -42,6 +42,7 @@ class Tauno_RGBLED_Wheel {
 
     bool begin();
     bool led_on(int index, uint32_t color);
+    bool off();
 };
 
 #endif  // LIB_TAUNO_RGBLED_WHEEL_SRC_TAUNO_RGBLED_WHEEL_H_
