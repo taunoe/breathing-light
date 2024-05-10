@@ -2,7 +2,7 @@
  * Tauno_RGBLED_Wheel.cpp
  *
  * Started 05.05.2024
- * Edited  07.05.2024
+ * Edited  10.05.2024
  * 
  * Copyright 2024 Tauno Erik
  */
@@ -40,15 +40,39 @@ bool Tauno_RGBLED_Wheel::led_on(int index, uint32_t color) {
     int old = pixels.getPixelColor(index);
 
     if (old != color) {
-        pixels.clear();
+        // pixels.clear();  // all off
         pixels.setPixelColor(index, color);
         pixels.show();
     }
     return true;
 }
 
-bool Tauno_RGBLED_Wheel::off() {
+bool Tauno_RGBLED_Wheel::led_off(int index) {
+    uint32_t color = 0x000000;
+    if (index > WHEEL_LED_COUNT) {
+        return false;
+    }
+
+    int old = pixels.getPixelColor(index);
+
+    if (old != color) {
+        // pixels.clear();  // all off
+        pixels.setPixelColor(index, color);
+        pixels.show();
+    }
+    return true;
+}
+
+bool Tauno_RGBLED_Wheel::all_off() {
     pixels.clear();
+    pixels.show();
+    return true;
+}
+
+bool Tauno_RGBLED_Wheel::all_on(uint32_t color) {
+    for (int i = 0; i < WHEEL_LED_COUNT; i++) {
+        pixels.setPixelColor(i, color);
+    }
     pixels.show();
     return true;
 }

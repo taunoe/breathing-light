@@ -2,16 +2,25 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 08.05.2024
+ * Last edited: 10.05.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
- * Description:
+ * Hingamisharjutused:
+ * - https://www.ph.ee/et/patsiendile-ja-kulastajale/patsiendi-infomaterjalid/enesehooldus/rahustav-hingamine
+ * - https://peaasi.ee/votted-rahunemiseks/
+ * - https://www.tlu.ee/meediavarav/blogid/pinge-leevendamise-votted-rahustav-hingamine
+ * - https://www.youtube.com/watch?v=k4C9FECTCcI
  *
+ * Diafragmaalhingamine:
+ * - sisse 5-10 sekundit
+ * - Välja 5-10 sekundit
  *
- *
- *
- *
+ * Hingamine hingamispeetusega:
+ * - sisse
+ * - hoida hinge kinni 3-5 sekundit
+ * - välja
+ * 
  * 
  */
 
@@ -111,56 +120,56 @@ void loop() {
 
   switch (selected_program) {  // peab loopima kogu aeg!
     case 1:  // Breathing technique 1
-      Wheel.led_on(1, 0xd5fc00);
+      Wheel.all_on(0x000725);
       break;
     case 2:
-      Wheel.led_on(2, 0xfc5900);
+      Wheel.all_on(0x000c3e);
       break;
     case 3:
-      Wheel.led_on(3, 0xfc0600);
+      Wheel.all_on(0x001159);
       break;
     case 4:
-      Wheel.led_on(4, 0x71fc00);
+      Wheel.all_on(0x021875);
       break;
     case 5:
-      Wheel.led_on(5, 0x00fc77);
+      Wheel.all_on(0x011c91);
       break;
     case 6:
-      Wheel.led_on(6, 0x00f9fc);
+      Wheel.all_on(0x0020a9);
       break;
     case 7:
-      Wheel.led_on(7, 0x000cfc);
+      Wheel.all_on(0x0226c2);
       break;
     case 8:
-      Wheel.led_on(8, 0x8200fc);
+      Wheel.all_on(0x022ad9);
       break;
     case 9:
-      Wheel.led_on(9, 0xfc00ca);
+      Wheel.all_on(0x022eed);
       break;
     case 10:
-      Wheel.led_on(10, 0xfc0006);
+      Wheel.all_on(0x0130fd);
       break;
     case 11:
-      Wheel.led_on(11, 0x00fca6);
+      Wheel.all_on(0x00fca6);
       break;
     case 12:
-      Wheel.led_on(12, 0xd20792);
+      Wheel.all_on(0xd20792);
       break;
     case 13:
-      Wheel.led_on(13, 0xd2d007);
+      Wheel.all_on(0xd2d007);
       break;
     case 14:
-      Wheel.led_on(14, 0xd24f07);
+      Wheel.all_on(0xd24f07);
       break;
     case 15:
-      Wheel.led_on(15, 0x3c1aba);
+      Wheel.all_on(0x3c1aba);
       break;
     case 16:
-      Wheel.led_on(16, 0x7aff18);
+      Wheel.all_on(0x0131fe);
       break;
     case 0: // OFF mode
     default:
-      Wheel.off();
+      Wheel.all_off();
       // Sleep?
       break;
   }

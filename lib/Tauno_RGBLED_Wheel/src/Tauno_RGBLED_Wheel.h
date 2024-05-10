@@ -2,7 +2,7 @@
  * Tauno_RGBLED_Wheel.h
  *
  * Started 05.05.2024
- * Edited  07.05.2024
+ * Edited  10.05.2024
  * 
  * Copyright 2024 Tauno Erik
  */
@@ -42,7 +42,9 @@ class Tauno_RGBLED_Wheel {
 
     bool begin();
     bool led_on(int index, uint32_t color);
-    bool off();
+    bool led_off(int index);
+    bool all_off();
+    bool all_on(uint32_t color);
 };
 
 #endif  // LIB_TAUNO_RGBLED_WHEEL_SRC_TAUNO_RGBLED_WHEEL_H_
