@@ -2,9 +2,12 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 10.05.2024
+ * Last edited: 19.05.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
+ * 
+ * Vaata:
+ *  https://github.com/adafruit/Adafruit_NeoPixel/blob/master/examples/strandtest_nodelay/strandtest_nodelay.ino
  * 
  * Hingamisharjutused:
  * - https://www.ph.ee/et/patsiendile-ja-kulastajale/patsiendi-infomaterjalid/enesehooldus/rahustav-hingamine
@@ -25,9 +28,9 @@
  */
 
 #include <Arduino.h>
-#include "Tauno_rotary_encoder.h" // Rotary Encoder
-#include "Tauno_Display_Char.h"   // 7-segment LED
-#include "Tauno_RGBLED_Wheel.h"   // RGB LEDs
+#include "Tauno_rotary_encoder.h"  // Rotary Encoder
+#include "Tauno_Display_Char.h"    // 7-segment LED
+#include "Tauno_RGBLED_Wheel.h"    // RGB LEDs
 
 
 // Rotary Encoder pins
@@ -167,7 +170,7 @@ void loop() {
     case 16:
       Wheel.all_on(0x0131fe);
       break;
-    case 0: // OFF mode
+    case 0:  // OFF mode
     default:
       Wheel.all_off();
       // Sleep?
