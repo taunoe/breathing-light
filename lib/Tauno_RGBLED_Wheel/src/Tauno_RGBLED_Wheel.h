@@ -2,7 +2,7 @@
  * Tauno_RGBLED_Wheel.h
  *
  * Started 05.05.2024
- * Edited  10.05.2024
+ * Edited  01.06.2024
  * 
  * Copyright 2024 Tauno Erik
  */
@@ -27,13 +27,14 @@
 #define WHEEL_CIRCLE_9_LEDS   7
 #define WHEEL_LED_COUNT     224  // Total
 
-#define WHEEL_BRIGHTNESS     50  // 0-255
+#define WHEEL_BRIGHTNESS     40  // 0-255
 
 class Tauno_RGBLED_Wheel {
  private:
     uint8_t _LED_PIN;
-
     Adafruit_NeoPixel pixels;
+    uint32_t colours_transition(uint8_t value);
+    uint32_t b_colours_transition(uint8_t value);
 
  public:
     Tauno_RGBLED_Wheel(uint8_t LED_PIN);
@@ -45,6 +46,9 @@ class Tauno_RGBLED_Wheel {
     bool led_off(int index);
     bool all_off();
     bool all_on(uint32_t color);
+
+    void rainbow(int wait);
+    void b_rainbow(int wait);
 };
 
 #endif  // LIB_TAUNO_RGBLED_WHEEL_SRC_TAUNO_RGBLED_WHEEL_H_

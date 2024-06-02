@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 19.05.2024
+ * Last edited: 01.06.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
@@ -123,52 +123,52 @@ void loop() {
 
   switch (selected_program) {  // peab loopima kogu aeg!
     case 1:  // Breathing technique 1
-      Wheel.all_on(0x000725);
+      Wheel.b_rainbow(50);
       break;
     case 2:
-      Wheel.all_on(0x000c3e);
+      Wheel.rainbow(50);
       break;
     case 3:
-      Wheel.all_on(0x001159);
+      Wheel.rainbow(300);
       break;
     case 4:
-      Wheel.all_on(0x021875);
+      Wheel.rainbow(400);
       break;
     case 5:
-      Wheel.all_on(0x011c91);
+      Wheel.rainbow(500);
       break;
     case 6:
-      Wheel.all_on(0x0020a9);
+      Wheel.rainbow(600);
       break;
     case 7:
-      Wheel.all_on(0x0226c2);
+      Wheel.rainbow(700);
       break;
     case 8:
-      Wheel.all_on(0x022ad9);
+      Wheel.rainbow(800);
       break;
     case 9:
-      Wheel.all_on(0x022eed);
+      Wheel.rainbow(900);
       break;
     case 10:
-      Wheel.all_on(0x0130fd);
+      Wheel.rainbow(10);
       break;
     case 11:
-      Wheel.all_on(0x00fca6);
+      Wheel.rainbow(50);
       break;
     case 12:
-      Wheel.all_on(0xd20792);
+      Wheel.rainbow(80);
       break;
     case 13:
-      Wheel.all_on(0xd2d007);
+      Wheel.rainbow(40);
       break;
     case 14:
-      Wheel.all_on(0xd24f07);
+      Wheel.rainbow(140);
       break;
     case 15:
-      Wheel.all_on(0x3c1aba);
+      Wheel.rainbow(150);
       break;
     case 16:
-      Wheel.all_on(0x0131fe);
+      Wheel.rainbow(160);
       break;
     case 0:  // OFF mode
     default:
