@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 01.06.2024
+ * Last edited: 20.06.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
@@ -112,7 +112,7 @@ void setup() {
 void setup1() {
   RE.begin();
   Number.begin();    // 7-segment led pins
-  Number.test(200);  // Display all numbers and letters
+  Number.test(10);  // Display all numbers and letters
 }
 
 /*****************************************
@@ -121,15 +121,17 @@ void setup1() {
 void loop() {
   delay(1);  // !! Must be, otherwise errors!!
 
+  uint32_t color = 0x00f706;
+
   switch (selected_program) {  // peab loopima kogu aeg!
     case 1:  // Breathing technique 1
-      Wheel.b_rainbow(50);
+      Wheel.led_on(126, 0x00f706);
       break;
     case 2:
-      Wheel.rainbow(50);
+      Wheel.led_on(134, 0x00f706);
       break;
     case 3:
-      Wheel.rainbow(300);
+      Wheel.led_on(110, 0x00f706);
       break;
     case 4:
       Wheel.rainbow(400);
