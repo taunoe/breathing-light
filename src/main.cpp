@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 20.06.2024
+ * Last edited: 21.06.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
@@ -32,6 +32,7 @@
 #include "Tauno_Display_Char.h"    // 7-segment LED
 #include "Tauno_RGBLED_Wheel.h"    // RGB LEDs
 
+bool clear_display = false;
 
 // Rotary Encoder pins
 const int RE_SW_PIN  = 13;
@@ -121,29 +122,35 @@ void setup1() {
 void loop() {
   delay(1);  // !! Must be, otherwise errors!!
 
+  if (clear_display) {
+    Wheel.all_off();
+    clear_display = false;
+  }
+
   uint32_t color = 0x00f706;
 
   switch (selected_program) {  // peab loopima kogu aeg!
-    case 1:  // Breathing technique 1
-      Wheel.led_on(210, 0x00f706);
+    case 1:
+      // Breathing technique 1
+      Wheel.arches_bottom_to_up(0x000cff, 200);
       break;
     case 2:
-      Wheel.led_on(220, 0x00f706);
+      Wheel.circles(0xffcc00, 400);
       break;
     case 3:
-      Wheel.led_on(100, 0x00f706);
+      Wheel.led_on(140, 0x00f706);
       break;
     case 4:
-      Wheel.rainbow(400);
+      Wheel.led_on(112, 0x00f706);
       break;
     case 5:
-      Wheel.rainbow(500);
+      Wheel.led_on(79, 0x00f706);
       break;
     case 6:
-      Wheel.rainbow(600);
+      Wheel.led_on(44, 0x00f706);
       break;
     case 7:
-      Wheel.rainbow(700);
+      Wheel.led_on(9, 0x00f706);
       break;
     case 8:
       Wheel.rainbow(800);
@@ -155,10 +162,10 @@ void loop() {
       Wheel.rainbow(10);
       break;
     case 11:
-      Wheel.rainbow(50);
+      Wheel.rainbow(50);  // Kiire Jääb sisse
       break;
     case 12:
-      Wheel.rainbow(80);
+      Wheel.rainbow(80);  // Aeglane Jääb sisse
       break;
     case 13:
       Wheel.rainbow(40);
@@ -233,6 +240,9 @@ void loop1() {
     old_selected_program = selected_program;
     Number.display(selected_program);
     num_start_time = millis();
+
+    // Clear display from old program
+    clear_display = true;
   }
 
   // If Rotary Encoder button is pressed:
