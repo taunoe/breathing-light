@@ -161,6 +161,18 @@ void Tauno_RGBLED_Wheel::arches_bottom_to_up(uint32_t color, int wait) {
         if ((millis() - prev) >= paus_time) {
             is_paus = false;
         }
+        if (index == 0) {
+            if ((millis() - prev) >= wait/2) {
+                led_on(26, 0);
+                led_on(61, 0);
+                led_on(96, 0);
+                pixels.show();
+            }
+        }
+    } else {
+        led_on(26, color);
+        led_on(61, color);
+        led_on(96, color);
     }
 
     if ((millis() - prev) >= wait && !is_paus) {
