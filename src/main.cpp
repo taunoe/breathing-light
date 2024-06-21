@@ -132,10 +132,10 @@ void loop() {
   switch (selected_program) {  // peab loopima kogu aeg!
     case 1:
       // Breathing technique 1
-      Wheel.arches_bottom_to_up(0x000cff, 200);
+      Wheel.arches_bottom_to_up(0x0f9c00, 200);
       break;
     case 2:
-      Wheel.circles(0xffcc00, 300);
+      Wheel.circles(0x0f9c00, 300);
       break;
     case 3:
       Wheel.led_on(140, 0x00f706);
