@@ -30,8 +30,7 @@
 #include <Arduino.h>
 #include "Tauno_rotary_encoder.h"  // Rotary Encoder
 #include "Tauno_Display_Char.h"    // 7-segment LED
-// #include "Tauno_RGBLED_Wheel.h"    // RGB LEDs
-#include "FastLED.h"  // 3.7.0 does not work!
+#include "Tauno_RGBLED_Wheel.h"    // RGB LEDs
 
 bool clear_display = false;
 
@@ -69,17 +68,17 @@ Tauno_Display_Char Number(A_PIN, B_PIN, DP_PIN, C_PIN,
 // RGB LED strip
 const int LED_PIN = 6;
 
-// Number of LEDs in a circles,
+// Number of LEDs in a circle,
 // from outside to inside
-const uint CIRCLE_1_NUM = 35;  //   0 -  34
-const uint CIRCLE_2_NUM = 35;  //  35 -  69
-const uint CIRCLE_3_NUM = 35;  //  70 - 104
-const uint CIRCLE_4_NUM = 28;  // 105 - 132
-const uint CIRCLE_5_NUM = 28;  // 133 - 160
-const uint CIRCLE_6_NUM = 21;  // 161 - 181
-const uint CIRCLE_7_NUM = 21;  // 182 - 202
-const uint CIRCLE_8_NUM = 14;  // 203 - 216
-const uint CIRCLE_9_NUM = 7;   // 217 - 223
+const uint CIRCLE_1_NUM = 35;
+const uint CIRCLE_2_NUM = 35;
+const uint CIRCLE_3_NUM = 35;
+const uint CIRCLE_4_NUM = 28;
+const uint CIRCLE_5_NUM = 28;
+const uint CIRCLE_6_NUM = 21;
+const uint CIRCLE_7_NUM = 21;
+const uint CIRCLE_8_NUM = 14;
+const uint CIRCLE_9_NUM = 7;
 
 const uint NUM_OF_CIRCLES = 9;
 
@@ -92,30 +91,20 @@ const uint CIRCLES[NUM_OF_CIRCLES + 1] = {
   CIRCLE_9_NUM};
 
 // Kokku LEDe
-const uint NUM_LEDS = CIRCLE_1_NUM + CIRCLE_2_NUM + CIRCLE_3_NUM
+const uint LED_COUNT = CIRCLE_1_NUM + CIRCLE_2_NUM + CIRCLE_3_NUM
                      + CIRCLE_4_NUM + CIRCLE_5_NUM + CIRCLE_6_NUM
                      + CIRCLE_7_NUM + CIRCLE_8_NUM + CIRCLE_9_NUM;
 
-// FastLED memory block
-CRGB leds[NUM_LEDS];
+// Declare RGB LED object
+Tauno_RGBLED_Wheel Wheel(LED_PIN);
 
-// Function prototypes
-void tauno_katsetus();
-void tauno_rainbow(int wait);
-void tauno_rainbow_circular(int wait);
-void tauno_rainbow_circular_out(int wait);
-void tauno_juggle();
-void tauno_bpm();
-void tauno_sinelon();
-void tauno_confetti();
 
 /*****************************************
  * Core 0 setup
  *****************************************/
 void setup() {
   Serial.begin(115200);
-  FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
-  FastLED.setBrightness(40);  // 0-255
+  Wheel.begin();
 }
 
 /*****************************************
@@ -131,68 +120,68 @@ void setup1() {
  * Core 0 loop
  *****************************************/
 void loop() {
-  // delay(1);  // !! Must be, otherwise errors!!
+  delay(1);  // !! Must be, otherwise errors!!
 
   if (clear_display) {
+    Wheel.all_off();
     clear_display = false;
   }
+
+  uint32_t color = 0x00f706;
 
   switch (selected_program) {  // peab loopima kogu aeg!
     case 1:
       // Breathing technique 1
-      // Wheel.arches_bottom_to_up(0x0f9c00, 200);
-      tauno_katsetus();
+      Wheel.arches_bottom_to_up(0x0f9c00, 200);
       break;
     case 2:
-      // Wheel.circles(0x0f9c00, 300);
+      Wheel.circles(0x0f9c00, 300);
       break;
     case 3:
-      // Wheel.katsetus();
-      tauno_rainbow(20);
+      Wheel.katsetus();
       break;
     case 4:
-      // Wheel.led_on(112, 0x00f706);
-      tauno_rainbow_circular(20);
+      Wheel.led_on(112, 0x00f706);
       break;
     case 5:
-      tauno_rainbow_circular_out(20);
+      Wheel.led_on(79, 0x00f706);
       break;
     case 6:
-      tauno_juggle();
+      Wheel.led_on(44, 0x00f706);
       break;
     case 7:
-      tauno_sinelon();
+      Wheel.led_on(9, 0x00f706);
       break;
     case 8:
-      tauno_confetti();
+      Wheel.rainbow(800);
       break;
     case 9:
-      // Wheel.rainbow(900);
+      Wheel.rainbow(900);
       break;
     case 10:
-      // Wheel.rainbow(10);
+      Wheel.rainbow(10);
       break;
     case 11:
-      // Wheel.rainbow(50);  // Kiire Jääb sisse
+      Wheel.rainbow(50);  // Kiire Jääb sisse
       break;
     case 12:
-      // Wheel.rainbow(80);  // Aeglane Jääb sisse
+      Wheel.rainbow(80);  // Aeglane Jääb sisse
       break;
     case 13:
-      // Wheel.rainbow(40);
+      Wheel.rainbow(40);
       break;
     case 14:
-      // Wheel.rainbow(140);
+      Wheel.rainbow(140);
       break;
     case 15:
-      // Wheel.rainbow(150);
+      Wheel.rainbow(150);
       break;
     case 16:
-      // Wheel.rainbow(160);
+      Wheel.rainbow(160);
       break;
     case 0:  // OFF mode
     default:
-      // Wheel.all_off();
+      Wheel.all_off();
       // Sleep?
       break;
   }
@@ -259,130 +248,5 @@ void loop1() {
   // If Rotary Encoder button is pressed:
   if (button) {
     Serial.println("Button!");
-  }
-}
-
-
-void tauno_katsetus() {
-  for (int dot = 0; dot < NUM_LEDS; dot++) {
-    leds[dot] = CRGB::Blue;
-    FastLED.show();
-    // clear this led for the next time around the loop
-    leds[dot] = CRGB::Black;
-    delay(30);
-  }
-}
-
-//
-void tauno_rainbow(int wait) {
-  static uint8_t initial_hue = 0;
-  const uint8_t delta_hue = 7;
-  const uint8_t hue_density = 1;
-
-  static uint32_t prev_millis = 0;
-
-  if ((millis() - prev_millis) >= wait) {
-    fill_rainbow(leds, NUM_LEDS, initial_hue += hue_density, delta_hue);
-    FastLED.show();
-    prev_millis = millis();
-  }
-}
-
-//
-void tauno_rainbow_circular(int wait) {
-  static uint8_t initial_hue = 0;
-  const uint8_t delta_hue = 7;
-  const uint8_t hue_density = 1;
-
-  static uint32_t prev_millis = 0;
-
-  if ((millis() - prev_millis) >= wait) {
-    fill_rainbow_circular(leds, NUM_LEDS, initial_hue += hue_density, true);
-    FastLED.show();
-    prev_millis = millis();
-  }
-}
-
-//
-void tauno_rainbow_circular_out(int wait) {
-  static uint8_t initial_hue = 0;
-  const uint8_t delta_hue = 7;
-  const uint8_t hue_density = 1;
-
-  static uint32_t prev_millis = 0;
-
-  if ((millis() - prev_millis) >= wait) {
-    fill_rainbow_circular(leds, NUM_LEDS, initial_hue += hue_density, false);
-    FastLED.show();
-    prev_millis = millis();
-  }
-}
-
-
-void tauno_juggle() {
-  // eight colored dots, weaving in and out of sync with each other
-
-  int wait = 250;
-  static uint32_t prev_millis = 0;
-
-  if ((millis() - prev_millis) >= wait) {
-    fadeToBlackBy(leds, NUM_LEDS, 20);
-    static uint8_t dothue = 0;
-    for (int i = 0; i < 2; i++) {
-      leds[beatsin16(i+7, 0, NUM_LEDS-1)] |= CHSV(dothue, 200, 255);
-      dothue += 32;
-    }
-    prev_millis = millis();
-    FastLED.show();
-  }
-}
-
-
-void tauno_bpm() {
-  // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
-  static uint8_t gHue = 0;
-  uint8_t BeatsPerMinute = 12;
-
-  CRGBPalette16 palette = PartyColors_p;
-  uint8_t beat = beatsin8(BeatsPerMinute, 64, 255);
-
-  int wait = 250;
-  static uint32_t prev_millis = 0;
-
-  if ((millis() - prev_millis) >= wait) {
-    for (int i = 0; i < NUM_LEDS; i++) {  // 9948
-      leds[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
-    }
-    FastLED.show();
-  }
-}
-
-void tauno_sinelon() {
-  static uint8_t gHue = 70;
-  // a colored dot sweeping back and forth, with fading trails
-  int wait = 50;
-  static uint32_t prev_millis = 0;
-
-  if ((millis() - prev_millis) >= wait) {
-    fadeToBlackBy(leds, NUM_LEDS, 20);
-    int pos = beatsin16(13, 0, NUM_LEDS-1);
-    leds[pos] += CHSV(gHue, 255, 192);
-    FastLED.show();
-    prev_millis = millis();
-  }
-}
-
-void tauno_confetti() {
-  static uint8_t gHue = 220;
-  // random colored speckles that blink in and fade smoothly
-  int wait = 100;
-  static uint32_t prev_millis = 0;
-
-  if ((millis() - prev_millis) >= wait) {
-  fadeToBlackBy( leds, NUM_LEDS, 10);
-  int pos = random16(NUM_LEDS);
-  leds[pos] += CHSV( gHue + random8(64), 200, 255);
-  FastLED.show();
-  prev_millis = millis();
   }
 }

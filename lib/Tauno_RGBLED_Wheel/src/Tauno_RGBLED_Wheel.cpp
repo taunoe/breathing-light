@@ -2,7 +2,7 @@
  * Tauno_RGBLED_Wheel.cpp
  *
  * Started 05.05.2024
- * Edited  21.06.2024
+ * Edited  22.06.2024
  * 
  * Copyright 2024 Tauno Erik
  */
@@ -48,6 +48,27 @@ bool Tauno_RGBLED_Wheel::led_on(int index, uint32_t color) {
     }
     return true;
 }
+
+// hue  An unsigned 16-bit value, 0 to 65535, representing one full
+//      loop of the color wheel, which allows 16-bit hues to "roll over"
+// sat  Saturation, 8-bit value, 0 (min or pure grayscale) to 255
+//      (max or pure hue). Default of 255 if unspecified.
+// val  Value (brightness), 8-bit value, 0 (min / black / off) to
+//      255 (max or full brightness). Default of 255 if unspecified.
+bool Tauno_RGBLED_Wheel::led_on_hsv(int index,
+                                    uint16_t hue,
+                                    uint8_t sat,
+                                    uint8_t val)
+{
+    if (index > WHEEL_LED_COUNT) {
+        return false;
+    }
+    uint32_t color = pixels.ColorHSV(hue, sat, val);
+    pixels.setPixelColor(index, color);
+
+    return true;
+}
+
 
 bool Tauno_RGBLED_Wheel::led_off(int index) {
     uint32_t color = 0x000000;
@@ -189,7 +210,7 @@ void Tauno_RGBLED_Wheel::arches_bottom_to_up(uint32_t color, int wait) {
             led_on(ledid_3_r[index], color);
             led_on(ledid_3_l[index], color);
             pixels.show();
-            index ++;
+            index++;
             if (index == size) {
                 is_paus = true;
                 go_up = false;
@@ -206,7 +227,7 @@ void Tauno_RGBLED_Wheel::arches_bottom_to_up(uint32_t color, int wait) {
             led_on(ledid_3_r[index], 0);
             led_on(ledid_3_l[index], 0);
             pixels.show();
-            index --;
+            index--;
             if (index < 0) {
                 is_paus = true;
                 go_up = true;
@@ -241,8 +262,7 @@ void Tauno_RGBLED_Wheel::circles(uint32_t color, int wait) {
         out = true;
     }
 
-    switch (ring)
-    {
+    switch (ring) {
     case 1:
         circle_on(2, 0);  // OFF
         circle_on(1, color);
@@ -302,10 +322,9 @@ void Tauno_RGBLED_Wheel::circles(uint32_t color, int wait) {
 }
 
 
- void Tauno_RGBLED_Wheel::circle_on(int index, uint32_t color) {
-    delay(1);
-    switch (index)
-    {
+void Tauno_RGBLED_Wheel::circle_on(int index, uint32_t color) {
+    // delay(1);
+    switch (index) {
     case 1:
         for (int led = 0; led < 35; led++) {
             led_on(led, color);
@@ -354,4 +373,29 @@ void Tauno_RGBLED_Wheel::circles(uint32_t color, int wait) {
     default:
         break;
     }
- }
+}
+
+
+void Tauno_RGBLED_Wheel::katsetus() {
+    // hue 0 to 65535
+    for (int value = 0; value < 255; value++) {
+        led_on_hsv(1, 10, 200, value);
+        led_on_hsv(2, 10, 200, value);
+        led_on_hsv(3, 10, 200, value);
+        led_on_hsv(4, 10, 200, value);
+        led_on_hsv(5, 10, 200, value);
+        pixels.show();
+        delay(1);
+    }
+    delay(500);
+    for (int value = 254; value > 0; value--) {
+        led_on_hsv(1, 10, 200, value);
+        led_on_hsv(2, 10, 200, value);
+        led_on_hsv(3, 10, 200, value);
+        led_on_hsv(4, 10, 200, value);
+        led_on_hsv(5, 10, 200, value);
+        pixels.show();
+        delay(1);
+    }
+    delay(500);
+}
