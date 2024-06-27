@@ -45,15 +45,8 @@
 #include "Tauno_Display_Char.h"    // 7-segment LED
 #include "FastLED.h"  // 3.7.0 does not work!
 
-#include "Adafruit_FlashTransport.h"  // To save memory
-#include "Adafruit_SPIFlash.h"        // To save memory
+// https://github.com/MakerMatrix/RP2040_flash_programming/blob/main/RP2040_flash/RP2040_flash.ino
 
-// Create an SPI flash instance
-Adafruit_FlashTransport_SPI flashTransport(SS, &SPI);
-Adafruit_SPIFlash flash(&flashTransport);
-
-// The address in flash memory where the selected program will be stored
-const uint32_t program_addr = 0;
 
 //------------------------------------------------------------------
 // Rotary Encoder
@@ -63,7 +56,8 @@ const int RE_CLK_PIN = 15;
 const int RE_DT_PIN  = 14;
 
 // Rotary Encoder variables
-uint8_t selected_program = 0;
+int selected_program = 1;
+int old_selected_program = selected_program;
 
 int RE_state = 0;
 int last_RE_state = 0;
@@ -172,14 +166,14 @@ void circles_in_out_1(int wait);
 void circles_in_out_2(int wait);
 void arches_bottom_to_up(int wait);
 
-bool write_program(int value, uint32_t addr);  // Write selected program to flash memory
-int read_program(uint32_t addr);  // Read selected program from flash memory
 
 /*****************************************
  * Core 0 setup
  *****************************************/
 void setup() {
   Serial.begin(115200);
+  //while (!Serial) {}
+
   FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
   FastLED.setBrightness(40);  // 0-255
 }
@@ -188,11 +182,6 @@ void setup() {
  * Core 1 setup
  *****************************************/
 void setup1() {
-  // Initialize flash memory
-  if (!flash.begin()) {
-    Serial.println("Error, failed to initialize flash chip!");
-    // while (1) {}  // Stop pogram
-  }
   // Initialize rotary encoder
   if (!RE.begin()) {
     Serial.println("Error, failed to initialize Rotary Encoder!");
@@ -204,17 +193,12 @@ void setup1() {
     // while (1) {}  // Stop pogram
   }
   // Number.test(10);  // Display all numbers and letters
-
-  // Read the stored selected program
-  selected_program = read_program(program_addr);
 }
 
 /*****************************************
  * Core 0 loop
  *****************************************/
 void loop() {
-  // delay(1);  // !! Must be, otherwise errors!!
-
   if (clear_display) {
     all_off();
     clear_display = false;
@@ -274,9 +258,6 @@ void loop() {
       break;
     case 0:  // OFF mode
     default:
-      Serial.print("selected_program:");
-      Serial.print(selected_program);
-      Serial.print("\n");
       all_off();  // Set all LEDs to off
       break;
   }
@@ -286,10 +267,11 @@ void loop() {
  * Core 1 loop
  *****************************************/
 void loop1() {
-  static int old_selected_program;
+  // static uint8_t old_selected_program = selected_program;
   static uint64_t num_start_time;
   uint64_t num_on_time = 1500;
   const int NUM_OF_PROGRAMS = 17;
+
 
   // Turn the number off after some time
   if ((millis() - num_start_time) >= num_on_time) {
@@ -336,15 +318,6 @@ void loop1() {
     old_selected_program = selected_program;
     Number.display(selected_program);
     num_start_time = millis();
-
-    // Save to flah memory
-    if (write_program(selected_program, program_addr)) {
-      Serial.print("Saved: ");
-    }
-    Serial.print("read: ");
-    uint8_t val = read_program(program_addr);
-    Serial.print(val);
-    Serial.print("\n");
 
     // Clear display from old program
     clear_display = true;
@@ -976,26 +949,4 @@ void arches_bottom_to_up(int wait) {
 }
 
 
-// Write selected program to flash memory
-bool write_program(int value, uint32_t addr) {
-  // Ensure the value is within the range of a single block
-  uint8_t buffer[4];
-  memcpy(buffer, &value, sizeof(value));
-  
-  flash.eraseSector(addr);
-  flash.writeBuffer(addr, buffer, sizeof(buffer));
-
-  return true;
-}
-
-// Read selected program from flash memory
-int read_program(uint32_t addr) {
-  int value = 0;
-  uint8_t buffer[4];
-  
-  flash.readBuffer(addr, buffer, sizeof(buffer));
-  memcpy(&value, buffer, sizeof(value));
-  
-  return value;
-}
 
