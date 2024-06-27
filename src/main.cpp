@@ -52,8 +52,8 @@
 Adafruit_FlashTransport_SPI flashTransport(SS, &SPI);
 Adafruit_SPIFlash flash(&flashTransport);
 
-// The address in flash memory where the data will be stored
-const uint32_t flashAddr = 0;
+// The address in flash memory where the selected program will be stored
+const uint32_t program_addr = 0;
 
 //------------------------------------------------------------------
 // Rotary Encoder
@@ -63,7 +63,8 @@ const int RE_CLK_PIN = 15;
 const int RE_DT_PIN  = 14;
 
 // Rotary Encoder variables
-int selected_program = 0;
+uint8_t selected_program = 0;
+
 int RE_state = 0;
 int last_RE_state = 0;
 uint32_t last_debounce_time = 0;
@@ -171,6 +172,8 @@ void circles_in_out_1(int wait);
 void circles_in_out_2(int wait);
 void arches_bottom_to_up(int wait);
 
+bool write_program(int value, uint32_t addr);  // Write selected program to flash memory
+int read_program(uint32_t addr);  // Read selected program from flash memory
 
 /*****************************************
  * Core 0 setup
@@ -185,9 +188,25 @@ void setup() {
  * Core 1 setup
  *****************************************/
 void setup1() {
-  RE.begin();
-  Number.begin();    // 7-segment led pins
-  Number.test(10);  // Display all numbers and letters
+  // Initialize flash memory
+  if (!flash.begin()) {
+    Serial.println("Error, failed to initialize flash chip!");
+    // while (1) {}  // Stop pogram
+  }
+  // Initialize rotary encoder
+  if (!RE.begin()) {
+    Serial.println("Error, failed to initialize Rotary Encoder!");
+    // while (1) {}  // Stop pogram
+  }
+  // initialize 7-segment LED
+  if (!Number.begin()) {
+    Serial.println("Error, failed to initialize 7-segment LED!");
+    // while (1) {}  // Stop pogram
+  }
+  // Number.test(10);  // Display all numbers and letters
+
+  // Read the stored selected program
+  selected_program = read_program(program_addr);
 }
 
 /*****************************************
@@ -255,6 +274,9 @@ void loop() {
       break;
     case 0:  // OFF mode
     default:
+      Serial.print("selected_program:");
+      Serial.print(selected_program);
+      Serial.print("\n");
       all_off();  // Set all LEDs to off
       break;
   }
@@ -309,10 +331,20 @@ void loop1() {
     num_start_time = millis();
   }
 
+  // If is new selected program
   if (selected_program != old_selected_program) {
     old_selected_program = selected_program;
     Number.display(selected_program);
     num_start_time = millis();
+
+    // Save to flah memory
+    if (write_program(selected_program, program_addr)) {
+      Serial.print("Saved: ");
+    }
+    Serial.print("read: ");
+    uint8_t val = read_program(program_addr);
+    Serial.print(val);
+    Serial.print("\n");
 
     // Clear display from old program
     clear_display = true;
@@ -749,6 +781,7 @@ void circles_in_out_2(int wait) {
   }
 }
 
+//------------------------------------------------------------------------------
 // Turn ON array off LEDs,
 // without delay
 void LEDs_on(int led_array[], int num_of_LEDs, uint8_t hue) {
@@ -759,7 +792,7 @@ void LEDs_on(int led_array[], int num_of_LEDs, uint8_t hue) {
   FastLED.show();
 }
 
-
+//------------------------------------------------------------------------------
 void arches_bottom_to_up(int wait) {
   uint8_t hue = 32;  // Color
   const uint32_t interval = wait;
@@ -771,14 +804,28 @@ void arches_bottom_to_up(int wait) {
   static int direction = UP;
   int up_speed = 50;
   int down_speed = 50;
+  const int cases_num = 16;
 
   // LED groups
   int leds_1_size = 3;
   int leds_1[leds_1_size] = {26, 61, 96};
 
-  int leds_2_size = 6;
-  int leds_2[leds_2_size] = {25, 27, 60, 62, 95, 97};
-
+  int leds_size = 6;
+  int leds_2[leds_size] = {25, 27, 60, 62, 95, 97};
+  int leds_3[leds_size] = {24, 28, 59, 63, 94, 98};
+  int leds_4[leds_size] = {23, 29, 58, 64, 93, 99};
+  int leds_5[leds_size] = {22, 30, 57, 65, 92, 100};
+  int leds_6[leds_size] = {21, 31, 56, 66, 91, 101};
+  int leds_7[leds_size] = {20, 32, 55, 67, 90, 102};
+  int leds_8[leds_size] = {19, 33, 54, 68, 89, 103};
+  int leds_9[leds_size] = {18, 34, 53, 69, 88, 104};
+  int leds_10[leds_size] = {17, 0, 52, 35, 87, 70};
+  int leds_11[leds_size] = {16, 1, 51, 36, 86, 71};
+  int leds_12[leds_size] = {15, 2, 50, 37, 85, 72};
+  int leds_13[leds_size] = {14, 3, 49, 38, 84, 73};
+  int leds_14[leds_size] = {13, 4, 48, 39, 83, 74};
+  int leds_15[leds_size] = {12, 5, 47, 40, 82, 75};
+  int leds_16[leds_size] = {11, 6, 46, 41, 81, 76};
 
   // Center is always ON
   LEDs_on(circle_9_leds, circle_9_num, hue);
@@ -804,9 +851,107 @@ void arches_bottom_to_up(int wait) {
         break;
       case 2:
         if (direction == UP) {
-          fade_in(leds_2, leds_2_size, up_speed, hue);
+          fade_in(leds_2, leds_size, up_speed, hue);
         } else {
-          fade_out(leds_2, leds_2_size, up_speed, hue);
+          fade_out(leds_2, leds_size, up_speed, hue);
+        }
+        break;
+      case 3:
+        if (direction == UP) {
+          fade_in(leds_3, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_3, leds_size, up_speed, hue);
+        }
+        break;
+      case 4:
+        if (direction == UP) {
+          fade_in(leds_4, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_4, leds_size, up_speed, hue);
+        }
+        break;
+      case 5:
+        if (direction == UP) {
+          fade_in(leds_5, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_5, leds_size, up_speed, hue);
+        }
+        break;
+      case 6:
+        if (direction == UP) {
+          fade_in(leds_6, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_6, leds_size, up_speed, hue);
+        }
+        break;
+      case 7:
+        if (direction == UP) {
+          fade_in(leds_7, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_7, leds_size, up_speed, hue);
+        }
+        break;
+      case 8:
+        if (direction == UP) {
+          fade_in(leds_8, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_8, leds_size, up_speed, hue);
+        }
+        break;
+      case 9:
+        if (direction == UP) {
+          fade_in(leds_9, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_9, leds_size, up_speed, hue);
+        }
+        break;
+      case 10:
+        if (direction == UP) {
+          fade_in(leds_10, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_10, leds_size, up_speed, hue);
+        }
+        break;
+      case 11:
+        if (direction == UP) {
+          fade_in(leds_11, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_11, leds_size, up_speed, hue);
+        }
+        break;
+      case 12:
+        if (direction == UP) {
+          fade_in(leds_12, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_12, leds_size, up_speed, hue);
+        }
+        break;
+      case 13:
+        if (direction == UP) {
+          fade_in(leds_13, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_13, leds_size, up_speed, hue);
+        }
+        break;
+      case 14:
+        if (direction == UP) {
+          fade_in(leds_14, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_14, leds_size, up_speed, hue);
+        }
+        break;
+      case 15:
+        if (direction == UP) {
+          fade_in(leds_15, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_15, leds_size, up_speed, hue);
+        }
+        break;
+      case 16:
+        if (direction == UP) {
+          fade_in(leds_16, leds_size, up_speed, hue);
+        } else {
+          fade_out(leds_16, leds_size, up_speed, hue);
         }
         break;
     default:
@@ -817,8 +962,8 @@ void arches_bottom_to_up(int wait) {
     if (direction == DOWN) { counter--; }
 
     // Highest UP point
-    if (counter >= 11) {
-      counter = 10;
+    if (counter >= cases_num + 1) {
+      counter = cases_num;
       direction = DOWN;
     }
 
@@ -829,3 +974,28 @@ void arches_bottom_to_up(int wait) {
     }
   }
 }
+
+
+// Write selected program to flash memory
+bool write_program(int value, uint32_t addr) {
+  // Ensure the value is within the range of a single block
+  uint8_t buffer[4];
+  memcpy(buffer, &value, sizeof(value));
+  
+  flash.eraseSector(addr);
+  flash.writeBuffer(addr, buffer, sizeof(buffer));
+
+  return true;
+}
+
+// Read selected program from flash memory
+int read_program(uint32_t addr) {
+  int value = 0;
+  uint8_t buffer[4];
+  
+  flash.readBuffer(addr, buffer, sizeof(buffer));
+  memcpy(&value, buffer, sizeof(value));
+  
+  return value;
+}
+

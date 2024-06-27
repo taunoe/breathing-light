@@ -1,6 +1,6 @@
 /*
  * File         Tauno_rotary_encoder.cpp
- * Last edited  03.04.2021
+ * Last edited  27.06.2024
  * 
  * Copyright 2021 Tauno Erik
  * https://taunoerik.art/
@@ -32,10 +32,12 @@ Tauno_Rotary_Encoder::~Tauno_Rotary_Encoder() {
 /*
  *  Call it on setup()
  */
-void Tauno_Rotary_Encoder::begin() {
+bool Tauno_Rotary_Encoder::begin() {
   pinMode(new_CLK_PIN, INPUT_PULLUP);
   pinMode(new_DT_PIN, INPUT_PULLUP);
   pinMode(new_SW_PIN, INPUT_PULLUP);
+
+  return true;
 }
 
 

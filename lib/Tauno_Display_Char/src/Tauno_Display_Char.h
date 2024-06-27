@@ -2,7 +2,7 @@
  * Tauno_Diaplay_Char.h
  *
  * Started 04.05.2024
- * Edited  05.05.2024
+ * Edited  27.06.2024
  * 
  * Copyright 2024 Tauno Erik
  */
@@ -38,7 +38,7 @@ class Tauno_Display_Char {
 
   ~Tauno_Display_Char();
 
-  void begin();
+  bool begin();
   void display(char c);
   void clear();
   void test(uint64_t wait);

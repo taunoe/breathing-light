@@ -2,7 +2,7 @@
  * Tauno_Diaplay_Char.cpp
  *
  * Started 04.05.2024
- * Edited  05.05.2024
+ * Edited  27.06.2024
  * 
  * Copyright 2024 Tauno Erik
  */
@@ -34,7 +34,7 @@ Tauno_Display_Char::~Tauno_Display_Char() {
     // Cleanup
 }
 
-void Tauno_Display_Char::begin() {
+bool Tauno_Display_Char::begin() {
   pinMode(_A_PIN, OUTPUT);
   pinMode(_B_PIN, OUTPUT);
   pinMode(_DP_PIN, OUTPUT);
@@ -52,6 +52,8 @@ void Tauno_Display_Char::begin() {
   _pins[5] = {_E_PIN};
   _pins[6] = {_G_PIN};
   _pins[7] = {_F_PIN};
+
+  return true;
 }
 
 void Tauno_Display_Char::display(char c) {
