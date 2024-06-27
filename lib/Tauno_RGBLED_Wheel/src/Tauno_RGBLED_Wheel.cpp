@@ -318,7 +318,6 @@ void Tauno_RGBLED_Wheel::circles(uint32_t color, int wait) {
     default:
         break;
     }
-
 }
 
 

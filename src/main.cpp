@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 26.06.2024
+ * Last edited: 27.06.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
@@ -25,12 +25,35 @@
  * - välja
  * 
  * 
+ * 
+ * https://github.com/FastLED/FastLED/wiki/FastLED-HSV-Colors
+ * 
+ * Hue colors:
+ *   0 - red
+ *  32 - orange
+ *  64 - yellow
+ *  96 - green
+ * 128 - aqua
+ * 160 - blue
+ * 192 - purple
+ * 224 - pink
+ * 
  */
 
 #include <Arduino.h>
 #include "Tauno_rotary_encoder.h"  // Rotary Encoder
 #include "Tauno_Display_Char.h"    // 7-segment LED
 #include "FastLED.h"  // 3.7.0 does not work!
+
+#include "Adafruit_FlashTransport.h"  // To save memory
+#include "Adafruit_SPIFlash.h"        // To save memory
+
+// Create an SPI flash instance
+Adafruit_FlashTransport_SPI flashTransport(SS, &SPI);
+Adafruit_SPIFlash flash(&flashTransport);
+
+// The address in flash memory where the data will be stored
+const uint32_t flashAddr = 0;
 
 //------------------------------------------------------------------
 // Rotary Encoder
@@ -79,52 +102,59 @@ CRGB leds[NUM_LEDS];
 bool clear_display = false;  // Clear display from old program
 
 
-//------------------------------------------------------------------
-// Circle 1
-const uint circle_1_num = 35;  // 0 - 34
-int circle_1_leds[circle_1_num] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-                              16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-                              30, 31, 32, 33, 34};
+//---------------------------------------------------------------------------
+// Circle 1: 0 - 34
+const uint circle_1_num = 35;
+int circle_1_leds[circle_1_num] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                                  13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+                                  24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34};
 
-// Circle 2
-const uint circle_2_num = 35;  // 35 - 69
-int circle_2_leds[circle_2_num] = {35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-                              49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-                              64, 65, 66, 67, 68, 69};
-// Circle 3
-const uint circle_3_num = 35;  // 70 - 104
-int circle_3_leds[circle_3_num] = {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84,
-                              85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-                              100, 101, 102, 103, 104};
-// Circle 4
-const uint circle_4_num = 28;  // 105 - 132
-int circle_4_leds[circle_4_num] = {105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115,
-                             116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128,
-                             129, 130, 131, 132};
-// Circle 5
-const uint circle_5_num = 28;  // 133 - 160
-int circle_5_leds[circle_5_num] = {133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144,
-                             145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157,
-                             158, 159, 160};
-// Circle 6
-const uint circle_6_num = 21;  // 161 - 181
-int circle_6_leds[circle_6_num] = {161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172,
-                            173, 174, 175, 176, 177, 178, 179, 180, 181};
-// Circle 7
-const uint circle_7_num = 21;  // 182 - 202
-int circle_7_leds[circle_7_num] = {182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193,
-                            194, 195, 196, 197, 198, 199, 200, 201, 202};
-// Circle 8
-const uint circle_8_num = 14;  // 203 - 216
-int circle_8_leds[circle_8_num] = {203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214,
-                                215, 216};
-// Circle 9
-const uint circle_9_num =  7;  // 217 - 223
+// Circle 2: 35 - 69
+const uint circle_2_num = 35;
+int circle_2_leds[circle_2_num] = {35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+                                   46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
+                                   57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
+                                   68, 69};
+// Circle 3: 70 - 104
+const uint circle_3_num = 35;
+int circle_3_leds[circle_3_num] = {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+                                   81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
+                                   92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+                                   102, 103, 104};
+// Circle 4: 105 - 132
+const uint circle_4_num = 28;
+int circle_4_leds[circle_4_num] = {105, 106, 107, 108, 109, 110, 111, 112, 113,
+                                   114, 115, 116, 117, 118, 119, 120, 121, 122,
+                                   123, 124, 125, 126, 127, 128, 129, 130, 131,
+                                   132};
+// Circle 5: 133 - 160
+const uint circle_5_num = 28;
+int circle_5_leds[circle_5_num] = {133, 134, 135, 136, 137, 138, 139, 140, 141,
+                                   142, 143, 144, 145, 146, 147, 148, 149, 150,
+                                   151, 152, 153, 154, 155, 156, 157, 158, 159,
+                                   160};
+// Circle 6: 161 - 181
+const uint circle_6_num = 21;
+int circle_6_leds[circle_6_num] = {161, 162, 163, 164, 165, 166, 167, 168, 169,
+                                   170, 171, 172, 173, 174, 175, 176, 177, 178,
+                                   179, 180, 181};
+// Circle 7: 182 - 202
+const uint circle_7_num = 21;
+int circle_7_leds[circle_7_num] = {182, 183, 184, 185, 186, 187, 188, 189, 190,
+                                   191, 192, 193, 194, 195, 196, 197, 198, 199,
+                                   200, 201, 202};
+// Circle 8: 203 - 216
+const uint circle_8_num = 14;
+int circle_8_leds[circle_8_num] = {203, 204, 205, 206, 207, 208, 209, 210, 211,
+                                   212, 213, 214, 215, 216};
+// Circle 9: 217 - 223
+const uint circle_9_num =  7;
 int circle_9_leds[circle_9_num] = {217, 218, 219, 220, 221, 222, 223};
 
 
-//------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // Function prototypes
+//-----------------------------------------------------------------------------
 void tauno_katsetus();
 void tauno_rainbow(int wait);
 void tauno_rainbow_circular(int wait);
@@ -139,6 +169,8 @@ void fade_out(int led_array[], int num_of_LEDs, int speed, uint8_t hue);
 void LEDs_on(int led_array[], int num_of_LEDs, uint8_t hue);
 void circles_in_out_1(int wait);
 void circles_in_out_2(int wait);
+void arches_bottom_to_up(int wait);
+
 
 /*****************************************
  * Core 0 setup
@@ -198,7 +230,7 @@ void loop() {
       tauno_confetti();
       break;
     case 9:
-      //
+      arches_bottom_to_up(500);
       break;
     case 10:
       // Wheel.rainbow(10);
@@ -237,7 +269,7 @@ void loop1() {
   uint64_t num_on_time = 1500;
   const int NUM_OF_PROGRAMS = 17;
 
-  // Turn number off after some time
+  // Turn the number off after some time
   if ((millis() - num_start_time) >= num_on_time) {
     Number.clear();  // off
   }
@@ -258,7 +290,7 @@ void loop1() {
     selected_program = NUM_OF_PROGRAMS;
   }
 
-  // If Rotary Encoder is rotated:
+  // If the Rotary Encoder is rotated:
   // CW = clockwise rotation
   // CCW = counterclockwise rotation
   if (re_direction == DIR_CW) {
@@ -292,8 +324,9 @@ void loop1() {
   }
 }
 
-//------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // Custom Functions
+//-----------------------------------------------------------------------------
 
 void tauno_katsetus() {
   for (int dot = 0; dot < NUM_LEDS; dot++) {
@@ -411,22 +444,22 @@ void tauno_confetti() {
   static uint32_t prev_millis = 0;
 
   if ((millis() - prev_millis) >= wait) {
-  fadeToBlackBy( leds, NUM_LEDS, 10);
-  int pos = random16(NUM_LEDS);
-  leds[pos] += CHSV( gHue + random8(64), 200, 255);
-  FastLED.show();
-  prev_millis = millis();
+    fadeToBlackBy(leds, NUM_LEDS, 10);
+    int pos = random16(NUM_LEDS);
+    leds[pos] += CHSV(gHue + random8(64), 200, 255);
+    FastLED.show();
+    prev_millis = millis();
   }
 }
 
 // Korraga põleb üks ring
 void circles_in_out_1(int wait) {
-  const long interval = wait;
+  const int interval = wait;
   const int in_speed = 50;
   const int out_speed = 10;
   uint8_t hue = 70;  // Color
-  static unsigned long prev_millis = 0;
-  unsigned long currentMillis = millis();
+  static uint32_t prev_millis = 0;
+  uint32_t currentMillis = millis();
   const int IN = 1;
   const int OUT = 0;
   static int direction = IN;
@@ -436,14 +469,13 @@ void circles_in_out_1(int wait) {
     prev_millis = currentMillis;
 
     Serial.println(counter);
-    
+
     switch (counter) {
       case 1:
         if (direction == OUT) {
           fade_in(circle_1_leds, circle_1_num, in_speed, hue);
           fade_out(circle_2_leds, circle_2_num, out_speed, hue);
         }
-        
         break;
       case 2:
         fade_in(circle_2_leds, circle_2_num, in_speed, hue);
@@ -452,7 +484,6 @@ void circles_in_out_1(int wait) {
         } else {
           fade_out(circle_3_leds, circle_3_num, out_speed, hue);
         }
-        
         break;
       case 3:
         fade_in(circle_3_leds, circle_3_num, in_speed, hue);
@@ -461,7 +492,6 @@ void circles_in_out_1(int wait) {
         } else {
           fade_out(circle_4_leds, circle_4_num, out_speed, hue);
         }
-        
         break;
       case 4:
         fade_in(circle_4_leds, circle_4_num, in_speed, hue);
@@ -470,7 +500,6 @@ void circles_in_out_1(int wait) {
         } else {
           fade_out(circle_5_leds, circle_5_num, out_speed, hue);
         }
-        
         break;
       case 5:
         fade_in(circle_5_leds, circle_5_num, in_speed, hue);
@@ -479,7 +508,6 @@ void circles_in_out_1(int wait) {
         } else {
           fade_out(circle_6_leds, circle_6_num, out_speed, hue);
         }
-        
         break;
       case 6:
         fade_in(circle_6_leds, circle_6_num, in_speed, hue);
@@ -488,7 +516,6 @@ void circles_in_out_1(int wait) {
         } else {
           fade_out(circle_7_leds, circle_7_num, out_speed, hue);
         }
-        
         break;
       case 7:
         fade_in(circle_7_leds, circle_7_num, in_speed, hue);
@@ -497,7 +524,6 @@ void circles_in_out_1(int wait) {
         } else {
           fade_out(circle_8_leds, circle_8_num, out_speed, hue);
         }
-        
         break;
       case 8:
         fade_in(circle_8_leds, circle_8_num, in_speed, hue);
@@ -506,14 +532,12 @@ void circles_in_out_1(int wait) {
         } else {
           fade_out(circle_9_leds, circle_9_num, out_speed, hue);
         }
-        
         break;
       case 9:
         if (direction == IN) {
           fade_in(circle_9_leds, circle_9_num, in_speed, hue);
           fade_out(circle_8_leds, circle_8_num, out_speed, hue);
         }
-        
         break;
       case  0:
       case 10:
@@ -530,7 +554,7 @@ void circles_in_out_1(int wait) {
     if (direction == OUT) {
       counter--;
     }
-    
+
     if (counter >= 11) {
       counter = 10;
       direction = OUT;
@@ -540,7 +564,6 @@ void circles_in_out_1(int wait) {
       counter = 0;
       direction = IN;
     }
-    
   }
 }
 
@@ -560,7 +583,7 @@ void fade_in(int led_array[], int num_of_LEDs, int speed, uint8_t hue) {
   static uint8_t brightness = 0;
   static int fade_amount = 5;
   static uint32_t prev_millis = 0;
-  const long fade_interval = speed;
+  const int fade_interval = speed;
 
   for (int i = 0; i < 256; i += fade_amount) {
     uint32_t current_millis = millis();
@@ -618,12 +641,12 @@ void fade_out(int led_array[], int num_of_LEDs, int speed, uint8_t hue) {
 
 // Sisemus põleb välja liikudes
 void circles_in_out_2(int wait) {
-  const long interval = wait;
+  const uint32_t interval = wait;
   const int in_speed = 50;
   const int out_speed = 50;
   uint8_t hue = 70;  // Color
-  static unsigned long prev_millis = 0;
-  unsigned long currentMillis = millis();
+  static uint32_t prev_millis = 0;
+  uint32_t current_millis = millis();
   const int IN = 1;
   const int OUT = 0;
   static int direction = OUT;
@@ -632,87 +655,71 @@ void circles_in_out_2(int wait) {
   // Most inner circle is always on
   LEDs_on(circle_9_leds, circle_9_num, hue);
 
-  if (currentMillis - prev_millis >= interval) {
-    prev_millis = currentMillis;
+  if (current_millis - prev_millis >= interval) {
+    prev_millis = current_millis;
 
     // Serial.println(counter);
-    
     switch (counter) {
       case 1:
         if (direction == OUT) {
           fade_in(circle_1_leds, circle_1_num, in_speed, hue);
           // fade_out(circle_2_leds, circle_2_num, out_speed, hue);
         }
-        
         break;
       case 2:
-        
         if (direction == IN) {
           fade_out(circle_1_leds, circle_1_num, out_speed, hue);
         } else {
           fade_in(circle_2_leds, circle_2_num, in_speed, hue);
         }
-        
         break;
       case 3:
-        
         if (direction == IN) {
           fade_out(circle_2_leds, circle_2_num, out_speed, hue);
         } else {
           fade_in(circle_3_leds, circle_3_num, in_speed, hue);
         }
-        
         break;
       case 4:
-        
         if (direction == IN) {
           fade_out(circle_3_leds, circle_3_num, out_speed, hue);
         } else {
           fade_in(circle_4_leds, circle_4_num, in_speed, hue);
         }
-        
         break;
       case 5:
-        
         if (direction == IN) {
           fade_out(circle_4_leds, circle_4_num, out_speed, hue);
         } else {
           fade_in(circle_5_leds, circle_5_num, in_speed, hue);
         }
-        
         break;
       case 6:
-        
         if (direction == IN) {
           fade_out(circle_5_leds, circle_5_num, out_speed, hue);
         } else {
           fade_in(circle_6_leds, circle_6_num, in_speed, hue);
         }
-        
         break;
       case 7:
-        
         if (direction == IN) {
           fade_out(circle_6_leds, circle_6_num, out_speed, hue);
         } else {
           fade_in(circle_7_leds, circle_7_num, in_speed, hue);
         }
-        
         break;
       case 8:
-        
         if (direction == IN) {
           fade_out(circle_7_leds, circle_7_num, out_speed, hue);
         } else {
           fade_in(circle_8_leds, circle_8_num, in_speed, hue);
         }
-        
         break;
       case 9:
         if (direction == IN) {
           fade_out(circle_8_leds, circle_8_num, out_speed, hue);
-        } 
-        
+        }
+
         break;
       case  0:
       case 10:
@@ -729,7 +736,7 @@ void circles_in_out_2(int wait) {
     if (direction == OUT) {
       counter--;
     }
-    
+
     if (counter >= 11) {
       counter = 10;
       direction = OUT;
@@ -739,7 +746,6 @@ void circles_in_out_2(int wait) {
       counter = 0;
       direction = IN;
     }
-    
   }
 }
 
@@ -751,4 +757,75 @@ void LEDs_on(int led_array[], int num_of_LEDs, uint8_t hue) {
     leds[index] = CHSV(hue, 255, 255);
   }
   FastLED.show();
+}
+
+
+void arches_bottom_to_up(int wait) {
+  uint8_t hue = 32;  // Color
+  const uint32_t interval = wait;
+  static uint32_t prev_millis = 0;
+  uint32_t current_millis = millis();
+  static int counter = 0;
+  const int UP = 1;
+  const int DOWN = 0;
+  static int direction = UP;
+  int up_speed = 50;
+  int down_speed = 50;
+
+  // LED groups
+  int leds_1_size = 3;
+  int leds_1[leds_1_size] = {26, 61, 96};
+
+  int leds_2_size = 6;
+  int leds_2[leds_2_size] = {25, 27, 60, 62, 95, 97};
+
+
+  // Center is always ON
+  LEDs_on(circle_9_leds, circle_9_num, hue);
+
+  if (current_millis - prev_millis >= interval) {
+    prev_millis = current_millis;
+
+    Serial.print("counter: ");
+    Serial.print(counter);
+    if (direction == UP) {
+      Serial.print(" UP\n");
+    } else {
+      Serial.print(" DOWN\n");
+    }
+
+    switch (counter) {
+      case 1:
+        if (direction == UP) {
+          fade_in(leds_1, leds_1_size, up_speed, hue);
+        } else {
+          fade_out(leds_1, leds_1_size, up_speed, hue);
+        }
+        break;
+      case 2:
+        if (direction == UP) {
+          fade_in(leds_2, leds_2_size, up_speed, hue);
+        } else {
+          fade_out(leds_2, leds_2_size, up_speed, hue);
+        }
+        break;
+    default:
+      break;
+    }
+
+    if (direction == UP) { counter++; }
+    if (direction == DOWN) { counter--; }
+
+    // Highest UP point
+    if (counter >= 11) {
+      counter = 10;
+      direction = DOWN;
+    }
+
+    // Lowest DOWN point
+    if (counter <= -1) {
+      counter = 0;
+      direction = UP;
+    }
+  }
 }
