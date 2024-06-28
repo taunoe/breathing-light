@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 27.06.2024
+ * Last edited: 28.06.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
@@ -45,8 +45,10 @@
 #include "Tauno_Display_Char.h"    // 7-segment LED
 #include "FastLED.h"  // 3.7.0 does not work!
 
+// https://arduino-pico.readthedocs.io/en/latest/eeprom.html
 // https://github.com/MakerMatrix/RP2040_flash_programming/blob/main/RP2040_flash/RP2040_flash.ino
-
+#include <EEPROM.h>
+int program_address = 0;
 
 //------------------------------------------------------------------
 // Rotary Encoder
@@ -70,7 +72,7 @@ Tauno_Rotary_Encoder RE(RE_SW_PIN, RE_CLK_PIN, RE_DT_PIN);
 
 //------------------------------------------------------------------
 // 7-SEGMENT LED
-// pins
+// Pins
 const int  A_PIN = 18;  // 1
 const int  B_PIN = 19;  // 2
 const int DP_PIN = 20;  // 3
@@ -95,7 +97,7 @@ const uint NUM_LEDS = 224;
 CRGB leds[NUM_LEDS];
 
 bool clear_display = false;  // Clear display from old program
-
+int led_brightness = 50;     // 0-255
 
 //---------------------------------------------------------------------------
 // Circle 1: 0 - 34
@@ -172,10 +174,22 @@ void arches_bottom_to_up(int wait);
  *****************************************/
 void setup() {
   Serial.begin(115200);
-  //while (!Serial) {}
+  //while (!Serial) {}  // Suspends the program until serial is connected
+
+  EEPROM.begin(256);
+
+  // Read last saved program from flash memory:
+  selected_program = EEPROM.read(program_address);
+  old_selected_program = selected_program;
+
+  Serial.print("selected_program: ");
+  Serial.print(selected_program, DEC);
+  Serial.print(" old: ");
+  Serial.print(old_selected_program, DEC);
+  Serial.println();
 
   FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
-  FastLED.setBrightness(40);  // 0-255
+  FastLED.setBrightness(led_brightness);  // 0-255
 }
 
 /*****************************************
@@ -192,19 +206,21 @@ void setup1() {
     Serial.println("Error, failed to initialize 7-segment LED!");
     // while (1) {}  // Stop pogram
   }
-  // Number.test(10);  // Display all numbers and letters
+  // Number.test(50);  // Display all numbers and letters
 }
 
 /*****************************************
  * Core 0 loop
  *****************************************/
 void loop() {
+  // If is selected new program clear display
   if (clear_display) {
     all_off();
     clear_display = false;
   }
 
-  switch (selected_program) {  // peab loopima kogu aeg!
+  // Display selected program
+  switch (selected_program) {
     case 1:
       // Breathing technique 1
       circles_in_out_1(500);
@@ -213,12 +229,12 @@ void loop() {
       circles_in_out_2(500);
       break;
     case 3:
-      // Wheel.katsetus();
-      tauno_rainbow(20);
+      // 
+      arches_bottom_to_up(500);
       break;
     case 4:
-      // Wheel.led_on(112, 0x00f706);
-      tauno_rainbow_circular(20);
+      //
+      tauno_sinelon();
       break;
     case 5:
       tauno_rainbow_circular_out(20);
@@ -227,16 +243,16 @@ void loop() {
       tauno_juggle();
       break;
     case 7:
-      tauno_sinelon();
+      tauno_rainbow(20);
       break;
     case 8:
       tauno_confetti();
       break;
     case 9:
-      arches_bottom_to_up(500);
+      tauno_rainbow_circular(20);
       break;
     case 10:
-      // Wheel.rainbow(10);
+      //
       break;
     case 11:
       // Wheel.rainbow(50);  // Kiire Jääb sisse
@@ -245,16 +261,16 @@ void loop() {
       // Wheel.rainbow(80);  // Aeglane Jääb sisse
       break;
     case 13:
-      // Wheel.rainbow(40);
+      //
       break;
     case 14:
-      // Wheel.rainbow(140);
+      //
       break;
     case 15:
-      // Wheel.rainbow(150);
+      //
       break;
     case 16:
-      // Wheel.rainbow(160);
+      //
       break;
     case 0:  // OFF mode
     default:
@@ -267,15 +283,26 @@ void loop() {
  * Core 1 loop
  *****************************************/
 void loop1() {
-  // static uint8_t old_selected_program = selected_program;
   static uint64_t num_start_time;
-  uint64_t num_on_time = 1500;
+  uint64_t num_on_time = 1500;     // Time till 7-segment led stays on
   const int NUM_OF_PROGRAMS = 17;
 
 
   // Turn the number off after some time
   if ((millis() - num_start_time) >= num_on_time) {
-    Number.clear();  // off
+    Number.clear();  // off 7-segment
+
+    // Read old
+    int old_saved = EEPROM.read(program_address);
+    // Save data if new program
+    if (old_saved != selected_program) {
+      EEPROM.write(program_address, selected_program);
+      if (EEPROM.commit()) {
+        Serial.println("EEPROM successfully committed");
+      } else {
+        Serial.println("ERROR! EEPROM commit failed");
+      }
+    }
   }
 
   // Read Rotary Encoder rotation direction
@@ -388,10 +415,9 @@ void tauno_rainbow_circular_out(int wait) {
   }
 }
 
-
+//
 void tauno_juggle() {
   // eight colored dots, weaving in and out of sync with each other
-
   int wait = 250;
   static uint32_t prev_millis = 0;
 
@@ -408,6 +434,7 @@ void tauno_juggle() {
 }
 
 
+//
 void tauno_bpm() {
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
   static uint8_t gHue = 0;
@@ -427,6 +454,7 @@ void tauno_bpm() {
   }
 }
 
+//
 void tauno_sinelon() {
   static uint8_t gHue = 70;
   // a colored dot sweeping back and forth, with fading trails
@@ -442,6 +470,7 @@ void tauno_sinelon() {
   }
 }
 
+//
 void tauno_confetti() {
   static uint8_t gHue = 220;
   // random colored speckles that blink in and fade smoothly
