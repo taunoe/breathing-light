@@ -297,6 +297,12 @@ void loop1() {
     // Save data if new program
     if (old_saved != selected_program) {
       EEPROM.write(program_address, selected_program);
+
+      Serial.print("old_saved ");
+      Serial.println(old_saved);
+      Serial.print("selected_program ");
+      Serial.println(selected_program);
+
       if (EEPROM.commit()) {
         Serial.println("EEPROM successfully committed");
       } else {
