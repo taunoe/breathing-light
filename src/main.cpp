@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 28.06.2024
+ * Last edited: 14.10.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
@@ -285,7 +285,7 @@ void loop() {
 void loop1() {
   static uint64_t num_start_time;
   uint64_t num_on_time = 1500;     // Time till 7-segment led stays on
-  const int NUM_OF_PROGRAMS = 17;
+  const int NUM_OF_PROGRAMS = 9;  // Max == 17
 
 
   // Turn the number off after some time
