@@ -223,14 +223,14 @@ void loop() {
   switch (selected_program) {
     case 1:
       // Breathing technique 1
-      circles_in_out_1(250);  // was 500
+      circles_in_out_1(200);  // was 500
       break;
     case 2:
-      circles_in_out_2(250);
+      circles_in_out_2(200);
       break;
     case 3:
       // 
-      arches_bottom_to_up(150);
+      arches_bottom_to_up(80);
       break;
     case 4:
       //
