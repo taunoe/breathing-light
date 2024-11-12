@@ -1,6 +1,6 @@
 # Breathing Light
 
-Read the [user manual](img/ENG_kasutusjuhend.pdf).
+Read the [user manual](https://raw.githubusercontent.com/taunoe/breathing-light/refs/heads/main/img/ENG_kasutusjuhend.pdf).
 
 ![The Breathing Light front view](img/Product_visuals-01.jpg)
 
