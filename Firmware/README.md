@@ -2,7 +2,7 @@
 
 ## Step 1
 
-Download [firmware.uf2](./firmware.uf2) file
+Download [firmware.uf2](https://github.com/taunoe/breathing-light/raw/refs/heads/main/Firmware/firmware.uf2) file
 
 ## Step 2
 
