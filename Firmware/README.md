@@ -1,30 +1,30 @@
 # Install Firmware
 
-## 0
+## Step 1
 
 Download [firmware.uf2](./firmware.uf2) file
 
-## 1
+## Step 2
 
 Unscrew the back cover
 
 ![Unscrew the back cover](../img/avamine-01.jpg)
 
-## 2
+## Step 3
 
 Hold down the button and at the same time connect the USB to the PC
 
 ![Button](../img/nupp-01.jpg)
 
-## 3
+## Step 4
 
 Drag and drop firmware.uf2 file
 
-## 4
+## Step 5
 
 Screw the back cover on and it's ready!
 
-## 5
+## Step 6
 
 Read the [user manual](https://raw.githubusercontent.com/taunoe/breathing-light/refs/heads/main/img/ENG_kasutusjuhend.pdf).
 
