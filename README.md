@@ -1,6 +1,10 @@
 # Breathing Light
 
-![The Breathing Light](img/IMG_3069_2048.jpg)
+Read the [user manual](img/ENG_kasutusjuhend.pdf).
+
+![The Breathing Light front view](img/Product_visuals-01.jpg)
+
+![The Breathing Light backt view](img/Product_visuals-02.jpg)
 
 ## Hardware
 
