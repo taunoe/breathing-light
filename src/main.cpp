@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 14.10.2024
+ * Last edited: 12.11.2024
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
@@ -223,14 +223,14 @@ void loop() {
   switch (selected_program) {
     case 1:
       // Breathing technique 1
-      circles_in_out_1(500);
+      circles_in_out_1(250);  // was 500
       break;
     case 2:
-      circles_in_out_2(500);
+      circles_in_out_2(250);
       break;
     case 3:
       // 
-      arches_bottom_to_up(500);
+      arches_bottom_to_up(150);
       break;
     case 4:
       //
