@@ -18,7 +18,9 @@ Hold down the button and at the same time connect the USB to the PC
 
 ## Step 4
 
-Drag and drop firmware.uf2 file
+Drag and drop firmware.uf2 file to RPI-RP2 drive
+
+![Copy](../img/copy.jpg)
 
 ## Step 5
 
