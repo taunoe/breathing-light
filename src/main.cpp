@@ -2,7 +2,7 @@
  * File:        main.cpp
  * Copyright    Tauno Erik
  * Started:     24.12.2023
- * Last edited: 12.11.2024
+ * Last edited: 21.01.2025
  * Project name:The Breathing Light
  * GitHub:      https://github.com/taunoe/breathing-light
  * 
@@ -161,13 +161,15 @@ void tauno_bpm();
 void tauno_sinelon();
 void tauno_confetti();
 void all_off();
-void fade_in(int led_array[], int num_of_LEDs, int speed, uint8_t hue);
-void fade_out(int led_array[], int num_of_LEDs, int speed, uint8_t hue);
+void fade_in(int led_array[], int num_of_LEDs, int speed, uint8_t hue, int fade_amount);
+void fade_out(int led_array[], int num_of_LEDs, int speed, uint8_t hue, int fade_amount);
+
+
 void LEDs_on(int led_array[], int num_of_LEDs, uint8_t hue);
 void circles_in_out_1(int wait);
 void circles_in_out_2(int wait);
 void arches_bottom_to_up(int wait);
-
+void celestial_object();
 
 /*****************************************
  * Core 0 setup
@@ -223,14 +225,14 @@ void loop() {
   switch (selected_program) {
     case 1:
       // Breathing technique 1
-      circles_in_out_1(200);  // was 500
+      circles_in_out_1(40);  // was 500
       break;
     case 2:
-      circles_in_out_2(200);
+      circles_in_out_2(100);  // was 200
       break;
     case 3:
       // 
-      arches_bottom_to_up(80);
+      arches_bottom_to_up(50);
       break;
     case 4:
       //
@@ -252,7 +254,7 @@ void loop() {
       tauno_rainbow_circular(20);
       break;
     case 10:
-      //
+      //celestial_object(); // New
       break;
     case 11:
       // Wheel.rainbow(50);  // Kiire Jääb sisse
@@ -285,7 +287,7 @@ void loop() {
 void loop1() {
   static uint64_t num_start_time;
   uint64_t num_on_time = 1500;     // Time till 7-segment led stays on
-  const int NUM_OF_PROGRAMS = 9;  // Max == 17
+  const int NUM_OF_PROGRAMS = 9;  // was 9
 
 
   // Turn the number off after some time
@@ -495,8 +497,9 @@ void tauno_confetti() {
 // Korraga põleb üks ring
 void circles_in_out_1(int wait) {
   const int interval = wait;
-  const int in_speed = 50;
+  const int in_speed = 20;
   const int out_speed = 10;
+  const int fade_amount = 6;
   uint8_t hue = 70;  // Color
   static uint32_t prev_millis = 0;
   uint32_t currentMillis = millis();
@@ -508,75 +511,75 @@ void circles_in_out_1(int wait) {
   if (currentMillis - prev_millis >= interval) {
     prev_millis = currentMillis;
 
-    Serial.println(counter);
+    //Serial.println(counter);
 
     switch (counter) {
       case 1:
         if (direction == OUT) {
-          fade_in(circle_1_leds, circle_1_num, in_speed, hue);
-          fade_out(circle_2_leds, circle_2_num, out_speed, hue);
+          fade_in(circle_1_leds, circle_1_num, in_speed, hue, fade_amount);
+          fade_out(circle_2_leds, circle_2_num, out_speed, hue, fade_amount);
         }
         break;
       case 2:
-        fade_in(circle_2_leds, circle_2_num, in_speed, hue);
+        fade_in(circle_2_leds, circle_2_num, in_speed, hue, fade_amount);
         if (direction == IN) {
-          fade_out(circle_1_leds, circle_1_num, out_speed, hue);
+          fade_out(circle_1_leds, circle_1_num, out_speed, hue, fade_amount);
         } else {
-          fade_out(circle_3_leds, circle_3_num, out_speed, hue);
+          fade_out(circle_3_leds, circle_3_num, out_speed, hue, fade_amount);
         }
         break;
       case 3:
-        fade_in(circle_3_leds, circle_3_num, in_speed, hue);
+        fade_in(circle_3_leds, circle_3_num, in_speed, hue, fade_amount);
         if (direction == IN) {
-          fade_out(circle_2_leds, circle_2_num, out_speed, hue);
+          fade_out(circle_2_leds, circle_2_num, out_speed, hue, fade_amount);
         } else {
-          fade_out(circle_4_leds, circle_4_num, out_speed, hue);
+          fade_out(circle_4_leds, circle_4_num, out_speed, hue, fade_amount);
         }
         break;
       case 4:
-        fade_in(circle_4_leds, circle_4_num, in_speed, hue);
+        fade_in(circle_4_leds, circle_4_num, in_speed, hue, fade_amount);
         if (direction == IN) {
-          fade_out(circle_3_leds, circle_3_num, out_speed, hue);
+          fade_out(circle_3_leds, circle_3_num, out_speed, hue, fade_amount);
         } else {
-          fade_out(circle_5_leds, circle_5_num, out_speed, hue);
+          fade_out(circle_5_leds, circle_5_num, out_speed, hue, fade_amount);
         }
         break;
       case 5:
-        fade_in(circle_5_leds, circle_5_num, in_speed, hue);
+        fade_in(circle_5_leds, circle_5_num, in_speed, hue, fade_amount);
         if (direction == IN) {
-          fade_out(circle_4_leds, circle_4_num, out_speed, hue);
+          fade_out(circle_4_leds, circle_4_num, out_speed, hue, fade_amount);
         } else {
-          fade_out(circle_6_leds, circle_6_num, out_speed, hue);
+          fade_out(circle_6_leds, circle_6_num, out_speed, hue, fade_amount);
         }
         break;
       case 6:
-        fade_in(circle_6_leds, circle_6_num, in_speed, hue);
+        fade_in(circle_6_leds, circle_6_num, in_speed, hue, fade_amount);
         if (direction == IN) {
-          fade_out(circle_5_leds, circle_5_num, out_speed, hue);
+          fade_out(circle_5_leds, circle_5_num, out_speed, hue, fade_amount);
         } else {
-          fade_out(circle_7_leds, circle_7_num, out_speed, hue);
+          fade_out(circle_7_leds, circle_7_num, out_speed, hue, fade_amount);
         }
         break;
       case 7:
-        fade_in(circle_7_leds, circle_7_num, in_speed, hue);
+        fade_in(circle_7_leds, circle_7_num, in_speed, hue, fade_amount);
         if (direction == IN) {
-          fade_out(circle_6_leds, circle_6_num, out_speed, hue);
+          fade_out(circle_6_leds, circle_6_num, out_speed, hue, fade_amount);
         } else {
-          fade_out(circle_8_leds, circle_8_num, out_speed, hue);
+          fade_out(circle_8_leds, circle_8_num, out_speed, hue, fade_amount);
         }
         break;
       case 8:
-        fade_in(circle_8_leds, circle_8_num, in_speed, hue);
+        fade_in(circle_8_leds, circle_8_num, in_speed, hue, fade_amount);
         if (direction == IN) {
-          fade_out(circle_7_leds, circle_7_num, out_speed, hue);
+          fade_out(circle_7_leds, circle_7_num, out_speed, hue, fade_amount);
         } else {
-          fade_out(circle_9_leds, circle_9_num, out_speed, hue);
+          fade_out(circle_9_leds, circle_9_num, out_speed, hue, fade_amount);
         }
         break;
       case 9:
         if (direction == IN) {
-          fade_in(circle_9_leds, circle_9_num, in_speed, hue);
-          fade_out(circle_8_leds, circle_8_num, out_speed, hue);
+          fade_in(circle_9_leds, circle_9_num, in_speed, hue, fade_amount);
+          fade_out(circle_8_leds, circle_8_num, out_speed, hue, fade_amount);
         }
         break;
       case  0:
@@ -616,16 +619,21 @@ void all_off() {
   FastLED.show();
 }
 
-// Fade In an array of LEDs
-void fade_in(int led_array[], int num_of_LEDs, int speed, uint8_t hue) {
+
+/**
+ * Fade In an array of LEDs
+ * Params:
+ * - fade_amount = 6
+ */
+void fade_in(int led_array[], int num_of_LEDs, int speed, uint8_t hue, int fade_amount) {
   // Serial.print("fade in start ");
   // Variables to control the fading
   static uint8_t brightness = 0;
-  static int fade_amount = 5;
+  //static int fade_amount = 6;
   static uint32_t prev_millis = 0;
   const int fade_interval = speed;
 
-  for (int i = 0; i < 256; i += fade_amount) {
+  for (int i = 0; i <= 255; i += fade_amount) {
     uint32_t current_millis = millis();
 
     // Check if it's time to update the brightness
@@ -648,11 +656,11 @@ void fade_in(int led_array[], int num_of_LEDs, int speed, uint8_t hue) {
 }
 
 // Fade Out an array of LEDs
-void fade_out(int led_array[], int num_of_LEDs, int speed, uint8_t hue) {
+void fade_out(int led_array[], int num_of_LEDs, int speed, uint8_t hue, int fade_amount) {
   // Serial.print("fade out start ");
   // Variables to control the fading
   static uint8_t brightness = 0;
-  static int fade_amount = 5;
+  //static int fade_amount = 6;
   static uint32_t prev_millis = 0;
   const int fade_interval = speed;
 
@@ -684,6 +692,7 @@ void circles_in_out_2(int wait) {
   const uint32_t interval = wait;
   const int in_speed = 50;
   const int out_speed = 50;
+  const int fade_amount = 6;
   uint8_t hue = 70;  // Color
   static uint32_t prev_millis = 0;
   uint32_t current_millis = millis();
@@ -702,62 +711,62 @@ void circles_in_out_2(int wait) {
     switch (counter) {
       case 1:
         if (direction == OUT) {
-          fade_in(circle_1_leds, circle_1_num, in_speed, hue);
+          fade_in(circle_1_leds, circle_1_num, in_speed, hue, fade_amount);
           // fade_out(circle_2_leds, circle_2_num, out_speed, hue);
         }
         break;
       case 2:
         if (direction == IN) {
-          fade_out(circle_1_leds, circle_1_num, out_speed, hue);
+          fade_out(circle_1_leds, circle_1_num, out_speed, hue, fade_amount);
         } else {
-          fade_in(circle_2_leds, circle_2_num, in_speed, hue);
+          fade_in(circle_2_leds, circle_2_num, in_speed, hue, fade_amount);
         }
         break;
       case 3:
         if (direction == IN) {
-          fade_out(circle_2_leds, circle_2_num, out_speed, hue);
+          fade_out(circle_2_leds, circle_2_num, out_speed, hue, fade_amount);
         } else {
-          fade_in(circle_3_leds, circle_3_num, in_speed, hue);
+          fade_in(circle_3_leds, circle_3_num, in_speed, hue, fade_amount);
         }
         break;
       case 4:
         if (direction == IN) {
-          fade_out(circle_3_leds, circle_3_num, out_speed, hue);
+          fade_out(circle_3_leds, circle_3_num, out_speed, hue, fade_amount);
         } else {
-          fade_in(circle_4_leds, circle_4_num, in_speed, hue);
+          fade_in(circle_4_leds, circle_4_num, in_speed, hue, fade_amount);
         }
         break;
       case 5:
         if (direction == IN) {
-          fade_out(circle_4_leds, circle_4_num, out_speed, hue);
+          fade_out(circle_4_leds, circle_4_num, out_speed, hue, fade_amount);
         } else {
-          fade_in(circle_5_leds, circle_5_num, in_speed, hue);
+          fade_in(circle_5_leds, circle_5_num, in_speed, hue, fade_amount);
         }
         break;
       case 6:
         if (direction == IN) {
-          fade_out(circle_5_leds, circle_5_num, out_speed, hue);
+          fade_out(circle_5_leds, circle_5_num, out_speed, hue, fade_amount);
         } else {
-          fade_in(circle_6_leds, circle_6_num, in_speed, hue);
+          fade_in(circle_6_leds, circle_6_num, in_speed, hue, fade_amount);
         }
         break;
       case 7:
         if (direction == IN) {
-          fade_out(circle_6_leds, circle_6_num, out_speed, hue);
+          fade_out(circle_6_leds, circle_6_num, out_speed, hue, fade_amount);
         } else {
-          fade_in(circle_7_leds, circle_7_num, in_speed, hue);
+          fade_in(circle_7_leds, circle_7_num, in_speed, hue, fade_amount);
         }
         break;
       case 8:
         if (direction == IN) {
-          fade_out(circle_7_leds, circle_7_num, out_speed, hue);
+          fade_out(circle_7_leds, circle_7_num, out_speed, hue, fade_amount);
         } else {
-          fade_in(circle_8_leds, circle_8_num, in_speed, hue);
+          fade_in(circle_8_leds, circle_8_num, in_speed, hue, fade_amount);
         }
         break;
       case 9:
         if (direction == IN) {
-          fade_out(circle_8_leds, circle_8_num, out_speed, hue);
+          fade_out(circle_8_leds, circle_8_num, out_speed, hue, fade_amount);
         }
 
         break;
@@ -804,6 +813,7 @@ void LEDs_on(int led_array[], int num_of_LEDs, uint8_t hue) {
 void arches_bottom_to_up(int wait) {
   uint8_t hue = 32;  // Color
   const uint32_t interval = wait;
+  const int fade_amount = 6;
   static uint32_t prev_millis = 0;
   uint32_t current_millis = millis();
   static int counter = 0;
@@ -852,114 +862,114 @@ void arches_bottom_to_up(int wait) {
     switch (counter) {
       case 1:
         if (direction == UP) {
-          fade_in(leds_1, leds_1_size, up_speed, hue);
+          fade_in(leds_1, leds_1_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_1, leds_1_size, up_speed, hue);
+          fade_out(leds_1, leds_1_size, up_speed, hue, fade_amount);
         }
         break;
       case 2:
         if (direction == UP) {
-          fade_in(leds_2, leds_size, up_speed, hue);
+          fade_in(leds_2, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_2, leds_size, up_speed, hue);
+          fade_out(leds_2, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 3:
         if (direction == UP) {
-          fade_in(leds_3, leds_size, up_speed, hue);
+          fade_in(leds_3, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_3, leds_size, up_speed, hue);
+          fade_out(leds_3, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 4:
         if (direction == UP) {
-          fade_in(leds_4, leds_size, up_speed, hue);
+          fade_in(leds_4, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_4, leds_size, up_speed, hue);
+          fade_out(leds_4, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 5:
         if (direction == UP) {
-          fade_in(leds_5, leds_size, up_speed, hue);
+          fade_in(leds_5, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_5, leds_size, up_speed, hue);
+          fade_out(leds_5, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 6:
         if (direction == UP) {
-          fade_in(leds_6, leds_size, up_speed, hue);
+          fade_in(leds_6, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_6, leds_size, up_speed, hue);
+          fade_out(leds_6, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 7:
         if (direction == UP) {
-          fade_in(leds_7, leds_size, up_speed, hue);
+          fade_in(leds_7, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_7, leds_size, up_speed, hue);
+          fade_out(leds_7, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 8:
         if (direction == UP) {
-          fade_in(leds_8, leds_size, up_speed, hue);
+          fade_in(leds_8, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_8, leds_size, up_speed, hue);
+          fade_out(leds_8, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 9:
         if (direction == UP) {
-          fade_in(leds_9, leds_size, up_speed, hue);
+          fade_in(leds_9, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_9, leds_size, up_speed, hue);
+          fade_out(leds_9, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 10:
         if (direction == UP) {
-          fade_in(leds_10, leds_size, up_speed, hue);
+          fade_in(leds_10, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_10, leds_size, up_speed, hue);
+          fade_out(leds_10, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 11:
         if (direction == UP) {
-          fade_in(leds_11, leds_size, up_speed, hue);
+          fade_in(leds_11, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_11, leds_size, up_speed, hue);
+          fade_out(leds_11, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 12:
         if (direction == UP) {
-          fade_in(leds_12, leds_size, up_speed, hue);
+          fade_in(leds_12, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_12, leds_size, up_speed, hue);
+          fade_out(leds_12, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 13:
         if (direction == UP) {
-          fade_in(leds_13, leds_size, up_speed, hue);
+          fade_in(leds_13, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_13, leds_size, up_speed, hue);
+          fade_out(leds_13, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 14:
         if (direction == UP) {
-          fade_in(leds_14, leds_size, up_speed, hue);
+          fade_in(leds_14, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_14, leds_size, up_speed, hue);
+          fade_out(leds_14, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 15:
         if (direction == UP) {
-          fade_in(leds_15, leds_size, up_speed, hue);
+          fade_in(leds_15, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_15, leds_size, up_speed, hue);
+          fade_out(leds_15, leds_size, up_speed, hue, fade_amount);
         }
         break;
       case 16:
         if (direction == UP) {
-          fade_in(leds_16, leds_size, up_speed, hue);
+          fade_in(leds_16, leds_size, up_speed, hue, fade_amount);
         } else {
-          fade_out(leds_16, leds_size, up_speed, hue);
+          fade_out(leds_16, leds_size, up_speed, hue, fade_amount);
         }
         break;
     default:
@@ -984,4 +994,354 @@ void arches_bottom_to_up(int wait) {
 }
 
 
+// --- Celestial Object -----------------------------
+
+void celestial_object() {
+  static uint32_t LED_colors[NUM_LEDS] = {0};
+  static bool initialize = true;
+  static bool colors_changed = false;
+  const int NUM_OF_CIRCLES = 9;  // 9+1
+  const uint CIRCLES[NUM_OF_CIRCLES] = {
+  7, 14, 21, 21, 28, 28, 35, 35, 35};
+
+  static bool update[NUM_OF_CIRCLES] = {false};
+  uint delays[NUM_OF_CIRCLES] = {65, 55, 75, 55, 85, 95, 115, 125, 135};
+  const int lenghts[NUM_OF_CIRCLES] = {7, 7, 6, 5, 4, 4, 4, 3, 3};
+  uint32_t colors[NUM_OF_CIRCLES] = {0xF8AA00, 0xF8AA00, 0xF8AA00, 0xff7618,
+                                     0xFF9400, 0xFF4000, 0xFF3000, 0xFF6400,
+                                     0xFF3000};
+  static uint prev_millis[NUM_OF_CIRCLES] = {0};
+  // circle 0
+  const int start_arc_0 = CIRCLES[0];
+  const int end_arc_0 = CIRCLES[1];
+  static int pixels_arc_0[7] = {0};  // active pixels nr
+  // circle 1
+  const int start_arc_1 = CIRCLES[0]+CIRCLES[1];
+  const int end_arc_1 = CIRCLES[1]+CIRCLES[2];
+  static int pixels_arc_1[7] = {0};  // nr
+  // circle 2
+  const int start_arc_2 = CIRCLES[1]+CIRCLES[2];
+  const int end_arc_2 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3];
+  static int pixels_arc_2[6] = {0};  // nr
+  // circle 3
+  const int start_arc_3 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3];
+  const int end_arc_3 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]+CIRCLES[4];
+  static int pixels_arc_3[5] = {0};  // nr
+  // circle 4
+  const int start_arc_4 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]+CIRCLES[4];
+  const int end_arc_4 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]+CIRCLES[4]+CIRCLES[5];
+  static int pixels_arc_4[4] = {0};  // nr
+  // circle 5
+  const int start_arc_5 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]
+                         +CIRCLES[4]+CIRCLES[5];
+  const int end_arc_5 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]
+                         +CIRCLES[4]+CIRCLES[5]+CIRCLES[6];
+  static int pixels_arc_5[4] = {0};  // nr
+  // circle 6
+  const int start_arc_6 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]
+                         +CIRCLES[4]+CIRCLES[5]+CIRCLES[6];
+  const int end_arc_6 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]
+                       +CIRCLES[4]+CIRCLES[5]+CIRCLES[6]+CIRCLES[7];
+  static int pixels_arc_6[4] = {0};  // nr
+  // circle 7
+  const int start_arc_7 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]+CIRCLES[4]
+                         +CIRCLES[5]+CIRCLES[6]+CIRCLES[7];
+  const int end_arc_7 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]+CIRCLES[4]
+                       +CIRCLES[5]+CIRCLES[6]+CIRCLES[7]+CIRCLES[8];
+  static int pixels_arc_7[3] = {0};  // nr
+  // circle 8
+  const int start_arc_8 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]+CIRCLES[4]
+                         +CIRCLES[5]+CIRCLES[6]+CIRCLES[7]+CIRCLES[8];
+  const int end_arc_8 = CIRCLES[1]+CIRCLES[2]+CIRCLES[3]+CIRCLES[4]
+                       +CIRCLES[5]+CIRCLES[6]+CIRCLES[7]+CIRCLES[8]+CIRCLES[9];
+  static int pixels_arc_8[3] = {0};  // nr
+
+  if (initialize) {
+    delay(2000);
+    Serial.println("Init");
+    initialize = false;
+    // all LEDs off
+    for (int i = 0; i < NUM_LEDS; i++) {
+      LED_colors[i] = 0x00;
+    }
+    // init arc 0
+    for (int i = 0; i < lenghts[0]; i++) {
+      pixels_arc_0[i] = start_arc_0 + i;
+    }
+    // init arc 1
+    for (int i = 0; i < lenghts[1]; i++) {
+      pixels_arc_1[i] = start_arc_1 + i;
+    }
+    // init arc 2
+    for (int i = 0; i < lenghts[2]; i++) {
+      pixels_arc_2[i] = start_arc_2 + i;
+    }
+    // init arc 3
+    for (int i = 0; i < lenghts[3]; i++) {
+      pixels_arc_3[i] = start_arc_3 + i;
+    }
+    // init arc 4
+    for (int i = 0; i < lenghts[4]; i++) {
+      pixels_arc_4[i] = start_arc_4 + i;
+    }
+    // init arc 5
+    for (int i = 0; i < lenghts[5]; i++) {
+      pixels_arc_5[i] = start_arc_5 + i;
+    }
+    // init arc 6
+    for (int i = 0; i < lenghts[6]; i++) {
+      pixels_arc_6[i] = start_arc_6 + i;
+    }
+    // init arc 7
+    for (int i = 0; i < lenghts[7]; i++) {
+      pixels_arc_7[i] = start_arc_7 + i;
+    }
+    // init arc 8
+    for (int i = 0; i < lenghts[8]; i++) {
+      pixels_arc_8[i] = start_arc_8 + i;
+    }
+  }
+
+  // 0 update arc time
+  if ((millis() - prev_millis[0]) >= delays[0]) {
+    prev_millis[0] = millis();
+    update[0] = true;
+    // Serial.println("Time arc 1");
+  }
+  // 1 update arc 2 time
+  if ((millis() - prev_millis[1]) >= delays[1]) {
+    prev_millis[1] = millis();
+    update[1] = true;
+  }
+  // 2 update arc 3 time
+  if ((millis() - prev_millis[2]) >= delays[2]) {
+    prev_millis[2] = millis();
+    update[2] = true;
+  }
+  // 3 update arc 3 time
+  if ((millis() - prev_millis[3]) >= delays[3]) {
+    prev_millis[3] = millis();
+    update[3] = true;
+  }
+  // 4 update arc 5 time
+  if ((millis() - prev_millis[4]) >= delays[4]) {
+    prev_millis[4] = millis();
+    update[4] = true;
+  }
+  // 5 update arc 6 time
+  if ((millis() - prev_millis[5]) >= delays[5]) {
+    prev_millis[5] = millis();
+    update[5] = true;
+  }
+  // 6 update arc 7 time
+  if ((millis() - prev_millis[6]) >= delays[6]) {
+    prev_millis[6] = millis();
+    update[6] = true;
+  }
+  // 7 update arc 7 time
+  if ((millis() - prev_millis[7]) >= delays[7]) {
+    prev_millis[7] = millis();
+    update[7] = true;
+  }
+  // 8 update arc 9 time
+  if ((millis() - prev_millis[8]) >= delays[8]) {
+    prev_millis[8] = millis();
+    update[8] = true;
+  }
+
+  // update arc 0 pixels
+  if (update[0]) {
+    update[0] = false;
+    colors_changed = true;
+
+    // remove old pixel colors
+    LED_colors[pixels_arc_0[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[0]; i++) {
+      if (pixels_arc_0[i] == end_arc_0 -1) {
+        pixels_arc_0[i] = start_arc_0;
+      } else {
+        pixels_arc_0[i] = pixels_arc_0[i] +1;
+      }
+    }
+
+    // move colors
+    for (int i = 0; i < lenghts[0]; i++) {
+      LED_colors[pixels_arc_0[i]] = colors[0];
+    }
+  }
+
+  // update arc 1 pixels
+  if (update[1]) {
+    update[1] = false;
+    colors_changed = true;
+    LED_colors[pixels_arc_1[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[1]; i++) {
+      if (pixels_arc_1[i] == end_arc_1 -1) {
+        pixels_arc_1[i] = start_arc_1;
+      } else {
+        pixels_arc_1[i] = pixels_arc_1[i] +1;
+      }
+    }
+    // move colors
+    for (int i = 0; i < lenghts[1]; i++) {
+      LED_colors[pixels_arc_1[i]] = colors[1];
+    }
+  }
+
+  // update arc 2 pixels
+  if (update[2]) {
+    update[2] = false;
+    colors_changed = true;
+    LED_colors[pixels_arc_2[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[2]; i++) {
+      if (pixels_arc_2[i] == end_arc_2 -1) {
+        pixels_arc_2[i] = start_arc_2;
+      } else {
+        pixels_arc_2[i] = pixels_arc_2[i] +1;
+      }
+    }
+    // move colors
+    for (int i = 0; i < lenghts[2]; i++) {
+      LED_colors[pixels_arc_2[i]] = colors[2];
+    }
+  }
+
+  // update arc 3 pixels
+  if (update[3]) {
+    update[3] = false;
+    colors_changed = true;
+    LED_colors[pixels_arc_3[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[3]; i++) {
+      if (pixels_arc_3[i] == end_arc_3 -1) {
+        pixels_arc_3[i] = start_arc_3;
+      } else {
+        pixels_arc_3[i] = pixels_arc_3[i] +1;
+      }
+    }
+    // move colors
+    for (int i = 0; i < lenghts[3]; i++) {
+      LED_colors[pixels_arc_3[i]] = colors[3];
+    }
+  }
+
+  // update arc 4 pixels
+  if (update[4]) {
+    update[4] = false;
+    colors_changed = true;
+    LED_colors[pixels_arc_4[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[4]; i++) {
+      if (pixels_arc_4[i] == end_arc_4 -1) {
+        pixels_arc_4[i] = start_arc_4;
+      } else {
+        pixels_arc_4[i] = pixels_arc_4[i] +1;
+      }
+    }
+    // move colors
+    for (int i = 0; i < lenghts[4]; i++) {
+      LED_colors[pixels_arc_4[i]] = colors[4];
+    }
+  }
+
+  // update arc 5 pixels
+  if (update[5]) {
+    update[5] = false;
+    colors_changed = true;
+    LED_colors[pixels_arc_5[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[5]; i++) {
+      if (pixels_arc_5[i] == end_arc_5 -1) {
+        pixels_arc_5[i] = start_arc_5;
+      } else {
+        pixels_arc_5[i] = pixels_arc_5[i] +1;
+      }
+    }
+    // move colors
+    for (int i = 0; i < lenghts[5]; i++) {
+      LED_colors[pixels_arc_5[i]] = colors[5];
+    }
+  }
+
+  // update arc 6 pixels
+  if (update[6]) {
+    update[6] = false;
+    colors_changed = true;
+    LED_colors[pixels_arc_6[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[6]; i++) {
+      if (pixels_arc_6[i] == end_arc_6 -1) {
+        pixels_arc_6[i] = start_arc_6;
+      } else {
+        pixels_arc_6[i] = pixels_arc_6[i] +1;
+      }
+    }
+    // move colors
+    for (int i = 0; i < lenghts[6]; i++) {
+      LED_colors[pixels_arc_6[i]] = colors[6];
+    }
+  }
+
+  // update arc 7 pixels
+  if (update[7]) {
+    update[7] = false;
+    colors_changed = true;
+    LED_colors[pixels_arc_7[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[7]; i++) {
+      if (pixels_arc_7[i] == end_arc_7 -1) {
+        pixels_arc_7[i] = start_arc_7;
+      } else {
+        pixels_arc_7[i] = pixels_arc_7[i] +1;
+      }
+    }
+    // move colors
+    for (int i = 0; i < lenghts[7]; i++) {
+      LED_colors[pixels_arc_7[i]] = colors[7];
+    }
+  }
+
+  // update arc 8 pixels
+  if (update[8]) {
+    update[8] = false;
+    colors_changed = true;
+    LED_colors[pixels_arc_8[0]] = 0x00;
+
+    // move pixels
+    for (int i = 0; i < lenghts[8]; i++) {
+      if (pixels_arc_8[i] == end_arc_8 -1) {
+        pixels_arc_8[i] = start_arc_8;
+      } else {
+        pixels_arc_8[i] = pixels_arc_8[i] +1;
+      }
+    }
+    // move colors
+    for (int i = 0; i < lenghts[8]; i++) {
+      LED_colors[pixels_arc_8[i]] = colors[8];
+    }
+  }
+
+  // ALL colors OUT
+  if (colors_changed) {
+    colors_changed = false;
+    all_off(); //pixels.clear();
+    for (int led = 0; led < NUM_LEDS; led++) {
+      //pixels.setPixelColor(led, LED_colors[led]);
+      leds[led] = LED_colors[led];
+    }
+    delay(1);
+    FastLED.show();
+  }
+}
 
